@@ -1,0 +1,10 @@
+{
+  "name": "step-04-socratic-agent",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Step 04: Socratic Study Mentor Agent over data/[area]/",
+  "scripts": {
+    "start": "node index.js",
+    "web": "adk web index.js --compile false --bundle false"
+  }
+}

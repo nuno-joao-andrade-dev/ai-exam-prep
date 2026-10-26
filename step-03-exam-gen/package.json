@@ -1,0 +1,9 @@
+{
+  "name": "step-03-exam-gen",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Step 03: Structured Exam & Rubric Generator from data/[area]/",
+  "scripts": {
+    "start": "node index.js"
+  }
+}

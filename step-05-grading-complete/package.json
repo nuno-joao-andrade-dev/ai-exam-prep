@@ -1,0 +1,10 @@
+{
+  "name": "step-05-grading-complete",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Step 05: Deterministic Rubric Grader & Express Web API Server in JavaScript",
+  "scripts": {
+    "start": "node index.js",
+    "server": "node server.js"
+  }
+}

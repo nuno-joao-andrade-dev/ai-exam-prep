@@ -1,0 +1,1213 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GDG Lisbon — AI Exam Prep with Google ADK & Local Gemma 4</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        /* Official Google & GDG Color Palette (Light / White Theme) */
+        --g-blue: #4285f4;
+        --g-blue-dark: #1a73e8;
+        --g-blue-bg: #e8f0fe;
+        --g-red: #ea4335;
+        --g-red-bg: #fce8e6;
+        --g-yellow: #fbbc04;
+        --g-yellow-dark: #e37400;
+        --g-yellow-bg: #fef7e0;
+        --g-green: #34a853;
+        --g-green-dark: #188038;
+        --g-green-bg: #e6f4ea;
+
+        --bg-canvas: #f8f9fa;
+        --bg-slide: #ffffff;
+        --bg-code: #f8f9fa;
+        --bg-code-header: #f1f3f4;
+        --border: #dadce0;
+        --border-subtle: #e8eaed;
+        --text: #202124;
+        --muted: #5f6368;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: 'Plus Jakarta Sans', 'Google Sans', 'Inter', system-ui, -apple-system, sans-serif;
+        background-color: var(--bg-canvas);
+        background-image:
+          radial-gradient(circle at 12% 10%, rgba(66, 133, 244, 0.07) 0%, transparent 32%),
+          radial-gradient(circle at 88% 14%, rgba(234, 67, 53, 0.06) 0%, transparent 28%),
+          radial-gradient(circle at 85% 88%, rgba(52, 168, 83, 0.07) 0%, transparent 32%),
+          radial-gradient(circle at 15% 85%, rgba(251, 188, 4, 0.08) 0%, transparent 30%),
+          radial-gradient(#dadce0 1px, transparent 1px);
+        background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 24px 24px;
+        color: var(--text);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* Google 4-Color Top Ribbon */
+      .google-color-bar {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        height: 4px;
+        width: 100%;
+        position: sticky;
+        top: 0;
+        z-index: 30;
+      }
+      .google-color-bar span:nth-child(1) { background: var(--g-blue); }
+      .google-color-bar span:nth-child(2) { background: var(--g-red); }
+      .google-color-bar span:nth-child(3) { background: var(--g-yellow); }
+      .google-color-bar span:nth-child(4) { background: var(--g-green); }
+
+      /* Top Bar */
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 28px;
+        border-bottom: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        position: sticky;
+        top: 4px;
+        z-index: 20;
+        box-shadow: 0 1px 3px rgba(60, 64, 67, 0.06);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .gdg-logo {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #ffffff;
+        border: 1px solid var(--border);
+        padding: 6px 12px;
+        border-radius: 999px;
+        box-shadow: 0 1px 2px rgba(60, 64, 67, 0.08);
+      }
+
+      .gdg-logo svg {
+        width: 26px;
+        height: 18px;
+        flex-shrink: 0;
+      }
+
+      .gdg-logo-text {
+        font-size: 13px;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+        color: var(--text);
+      }
+
+      .gdg-logo-city {
+        font-weight: 600;
+        color: var(--muted);
+        margin-left: 3px;
+      }
+
+      .brand-title {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--text);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .brand-sub {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 2px;
+      }
+
+      .brand-sub code {
+        background: var(--g-blue-bg);
+        color: var(--g-blue-dark);
+        padding: 1px 6px;
+        border-radius: 4px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 11px;
+        font-weight: 600;
+      }
+
+      .controls {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .btn {
+        background: #ffffff;
+        border: 1px solid var(--border);
+        color: var(--text);
+        padding: 7px 14px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        box-shadow: 0 1px 2px rgba(60, 64, 67, 0.05);
+      }
+
+      .btn:hover:not(:disabled) {
+        background: var(--g-blue-bg);
+        border-color: var(--g-blue);
+        color: var(--g-blue-dark);
+      }
+
+      .btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+
+      .counter {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--g-blue-dark);
+        background: var(--g-blue-bg);
+        padding: 5px 12px;
+        border-radius: 999px;
+      }
+
+      .progress-track {
+        height: 4px;
+        background: var(--border-subtle);
+        width: 100%;
+      }
+
+      .progress-bar {
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          var(--g-blue) 0%,
+          var(--g-red) 35%,
+          var(--g-yellow) 70%,
+          var(--g-green) 100%
+        );
+        transition: width 0.25s ease;
+      }
+
+      /* Stage */
+      .stage {
+        flex: 1;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 32px 24px 60px;
+      }
+
+      .slide {
+        display: none;
+        width: 100%;
+        max-width: 1180px;
+        background: var(--bg-slide);
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        padding: 36px 42px 28px;
+        box-shadow:
+          0 1px 3px rgba(60, 64, 67, 0.08),
+          0 12px 32px rgba(60, 64, 67, 0.07);
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* Subtle 4-color top border inside each slide card */
+      .slide::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(
+          90deg,
+          var(--g-blue) 0%,
+          var(--g-blue) 25%,
+          var(--g-red) 25%,
+          var(--g-red) 50%,
+          var(--g-yellow) 50%,
+          var(--g-yellow) 75%,
+          var(--g-green) 75%,
+          var(--g-green) 100%
+        );
+      }
+
+      .slide.active {
+        display: block;
+      }
+
+      .slide-All .slide {
+        display: block;
+        margin-bottom: 28px;
+      }
+
+      .slide-All .stage {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .step-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--g-blue-dark);
+        background: var(--g-blue-bg);
+        border: 1px solid rgba(66, 133, 244, 0.3);
+        padding: 5px 14px;
+        border-radius: 999px;
+        margin-bottom: 14px;
+      }
+
+      .step-tag::before {
+        content: '';
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--g-blue);
+        box-shadow:
+          12px 0 0 var(--g-red),
+          24px 0 0 var(--g-yellow),
+          36px 0 0 var(--g-green);
+        margin-right: 38px;
+      }
+
+      h1 {
+        font-size: 27px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        margin: 0 0 10px 0;
+        color: var(--text);
+      }
+
+      h1 code {
+        background: var(--g-blue-bg);
+        color: var(--g-blue-dark);
+        padding: 2px 10px;
+        border-radius: 8px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 22px;
+      }
+
+      p.lead {
+        margin: 0 0 20px 0;
+        color: var(--muted);
+        font-size: 15px;
+        line-height: 1.6;
+      }
+
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+      }
+
+      @media (max-width: 960px) {
+        .grid-2 {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .code-box {
+        background: var(--bg-code);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        overflow: hidden;
+        margin-bottom: 16px;
+        box-shadow: 0 1px 2px rgba(60, 64, 67, 0.04);
+      }
+
+      .code-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 14px;
+        background: var(--bg-code-header);
+        border-bottom: 1px solid var(--border);
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 11.5px;
+        font-weight: 600;
+        color: var(--g-blue-dark);
+      }
+
+      .code-header > span {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .code-header > span::before {
+        content: '';
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--g-red);
+        box-shadow:
+          13px 0 0 var(--g-yellow),
+          26px 0 0 var(--g-green);
+        margin-right: 28px;
+      }
+
+      .copy-btn {
+        background: #ffffff;
+        border: 1px solid var(--border);
+        color: var(--text);
+        border-radius: 999px;
+        padding: 3px 10px;
+        font-size: 11px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.15s ease;
+      }
+
+      .copy-btn:hover {
+        background: var(--g-blue-bg);
+        border-color: var(--g-blue);
+        color: var(--g-blue-dark);
+      }
+
+      pre {
+        margin: 0;
+        padding: 15px 18px;
+        overflow-x: auto;
+        font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 12.5px;
+        line-height: 1.55;
+        color: #1f2937;
+        background: #ffffff;
+      }
+
+      .steps-list {
+        margin: 0 0 14px 0;
+        padding-left: 20px;
+        color: var(--text);
+        font-size: 13.5px;
+        line-height: 1.65;
+      }
+
+      .steps-list code,
+      p.lead code {
+        background: var(--g-blue-bg);
+        color: var(--g-blue-dark);
+        padding: 2px 7px;
+        border-radius: 6px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 12.5px;
+        font-weight: 600;
+      }
+
+      /* Slide Footer with GDG Lisbon Branding */
+      .slide-footer {
+        max-width: 1180px;
+        width: 100%;
+        margin: -42px auto 32px;
+        padding: 0 28px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .gdg-pills {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .gdg-pill {
+        font-size: 11px;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 999px;
+      }
+
+      .gdg-pill.blue { background: var(--g-blue-bg); color: var(--g-blue-dark); }
+      .gdg-pill.red { background: var(--g-red-bg); color: var(--g-red); }
+      .gdg-pill.yellow { background: var(--g-yellow-bg); color: var(--g-yellow-dark); }
+      .gdg-pill.green { background: var(--g-green-bg); color: var(--g-green-dark); }
+    </style>
+  </head>
+  <body>
+    <div class="google-color-bar">
+      <span></span><span></span><span></span><span></span>
+    </div>
+    <header class="topbar">
+      <div class="brand">
+        <div class="gdg-logo" title="Google Developer Groups Lisbon">
+          <svg viewBox="0 0 64 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M23.5 7L8.5 19.5" stroke="#EA4335" stroke-width="6.5" stroke-linecap="round" />
+            <path d="M8.5 20.5L23.5 33" stroke="#4285F4" stroke-width="6.5" stroke-linecap="round" />
+            <path d="M40.5 7L55.5 19.5" stroke="#FBBC04" stroke-width="6.5" stroke-linecap="round" />
+            <path d="M55.5 20.5L40.5 33" stroke="#34A853" stroke-width="6.5" stroke-linecap="round" />
+          </svg>
+          <span class="gdg-logo-text">GDG<span class="gdg-logo-city">Lisbon</span></span>
+        </div>
+        <div>
+          <div class="brand-title">AI Exam Prep in Plain JavaScript — Step-by-Step Code Walkthrough</div>
+          <div class="brand-sub">Nuno Andrade • GDG Lisbon • <code>data/[area]/[content files]</code> • Google ADK + Local Gemma 4 + React</div>
+        </div>
+      </div>
+      <div class="controls">
+        <button class="btn" id="prevBtn" onclick="changeSlide(-1)">← Prev</button>
+        <span class="counter" id="slideCounter">1 / 16</span>
+        <button class="btn" id="nextBtn" onclick="changeSlide(1)">Next →</button>
+        <button class="btn" id="modeBtn" onclick="toggleAllMode()">Scroll All Slides</button>
+      </div>
+    </header>
+    <div class="progress-track">
+      <div class="progress-bar" id="progressBar" style="width: 6.25%"></div>
+    </div>
+
+    <main class="stage" id="stage">
+      <!-- SLIDE 1 -->
+      <section class="slide active">
+        <span class="step-tag">Slide 01 / 16 • Project Architecture</span>
+        <h1>Simple JavaScript Folder Layout &amp; <code>data/[area]/[content files]</code></h1>
+        <p class="lead">
+          Every step is a self-contained JavaScript folder (<code>node index.js &lt;area&gt;</code>), study materials live in <code>data/[area]/[content files]</code>, and the React web app lives in <code>question-interface/</code>.
+        </p>
+        <div class="code-box">
+          <div class="code-header"><span>Workspace Tree</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code>examprep/
+├── data/                         # Pass any &lt;area&gt; folder name as a parameter!
+│   ├── javascript/
+│   │   ├── 01-event-loop-async.md
+│   │   └── 02-closures-scopes.md
+│   ├── ai-agents/
+│   │   ├── 01-adk-fundamentals.md
+│   │   └── 02-rag-and-gemma.md
+│   └── cloud/
+│       ├── 01-containers-and-scaling.md
+│       └── 02-caching-and-cdns.md
+├── src/shared/
+│   ├── content-loader.js         # Loads &amp; searches data/[area]/*.md (or customContent)
+│   └── ollama-llm.js             # Minimal ADK BaseLlm adapter using native fetch()
+├── step-01-setup/                # cd step-01-setup &amp;&amp; node index.js &lt;area&gt;
+├── step-02-rag/                  # cd step-02-rag &amp;&amp; node index.js &lt;area&gt;
+├── step-03-exam-gen/             # cd step-03-exam-gen &amp;&amp; node index.js &lt;area&gt;
+├── step-04-socratic-agent/       # cd step-04-socratic-agent &amp;&amp; node index.js &lt;area&gt;
+├── step-05-grading-complete/     # cd step-05-grading-complete &amp;&amp; node index.js &lt;area&gt;
+└── question-interface/           # React + Vite Web UI (?area=javascript)</code></pre>
+        </div>
+      </section>
+
+      <!-- SLIDE 2 -->
+      <section class="slide">
+        <span class="step-tag">Slide 02 / 16 • Step 0.1: Runtime Installation</span>
+        <h1>Install Node.js 22+ &amp; Ollama Local LLM Server</h1>
+        <p class="lead">
+          Node.js 22+ runs ES Modules (<code>"type": "module"</code>) and built-in <code>fetch()</code> natively—no TypeScript build step or extra HTTP libraries required.
+        </p>
+        <div class="code-box">
+          <div class="code-header"><span>Terminal — Install &amp; Verify Node.js + Ollama</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code># 1. Verify Node.js v22+ and npm
+node --version   # v22.x or newer
+npm --version
+
+# 2. Install Ollama on Linux (or `brew install ollama` on macOS)
+curl -fsSL https://ollama.com/install.sh | sh
+
+# 3. Start Ollama daemon if not already running as a systemd service
+ollama serve &amp;
+
+# 4. Verify the local Ollama HTTP API is responding on port 11434
+curl http://127.0.0.1:11434/api/tags</code></pre>
+        </div>
+      </section>
+
+      <!-- SLIDE 3 -->
+      <section class="slide">
+        <span class="step-tag">Slide 03 / 16 • Step 0.2: Model &amp; npm Setup</span>
+        <h1>Pull Local <code>gemma4:e2b</code> &amp; Install Workspace Dependencies</h1>
+        <p class="lead">
+          Pull the Gemma 4 model once for offline inference, then run <code>npm install</code> in the root folder to link all 5 step folders and <code>question-interface</code>.
+        </p>
+        <div class="grid-2">
+          <div class="code-box">
+            <div class="code-header"><span>Terminal — Pull Model &amp; Install Packages</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code># 1. Download local Gemma 4 model
+ollama pull gemma4:e2b
+
+# 2. Test local inference in CLI
+ollama run gemma4:e2b "Say hello in 1 sentence."
+
+# 3. Install all workspace dependencies
+cd examprep
+npm install</code></pre>
+          </div>
+          <div class="code-box">
+            <div class="code-header"><span>package.json (Root &amp; Step Scripts)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code>// Root package.json "scripts":
+{
+  "dev": "concurrently -n api,ui,slides -c green,cyan,magenta \"npm run server\" \"npm run ui\" \"npm run slides\"",
+  "step01": "node step-01-setup/index.js",
+  "step02": "node step-02-rag/index.js",
+  "step03": "node step-03-exam-gen/index.js",
+  "step04": "node step-04-socratic-agent/index.js",
+  "step04:web": "adk web step-04-socratic-agent/index.js --compile false --bundle false",
+  "step05": "node step-05-grading-complete/index.js",
+  "server": "node step-05-grading-complete/server.js",
+  "ui": "npm --prefix question-interface run dev",
+  "ui:build": "npm --prefix question-interface run build",
+  "slides": "node src/shared/serve-slides.js",
+  "test:all": "node src/shared/test-all.js"
+}
+
+// Each step-0X-.../package.json "scripts":
+{
+  "start": "node index.js"
+}</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 4 -->
+      <section class="slide">
+        <span class="step-tag">Slide 04 / 16 • Content Directory Convention</span>
+        <h1>Adding Study Notes in <code>data/[area]/[content files]</code></h1>
+        <p class="lead">
+          Each subfolder inside <code>data/</code> represents a study area (<code>javascript</code>, <code>ai-agents</code>, <code>cloud</code>, or any folder you create). Markdown files are split into chunks by <code>## </code> headings.
+        </p>
+        <div class="grid-2">
+          <div class="code-box">
+            <div class="code-header"><span>data/javascript/01-event-loop-async.md</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code># Event Loop, Microtasks &amp; Async JavaScript
+
+## Slide 1: The Single-Threaded Runtime Model
+JavaScript executes code on a single main thread:
+- **Call Stack:** Executes synchronous functions (LIFO).
+- **Task / Macrotask Queue:** `setTimeout`, `setInterval`.
+- **Microtask Queue:** `Promise.then`, `queueMicrotask`.
+
+## Slide 2: Microtask Queue vs. Macrotask Queue
+After the Call Stack empties, the Event Loop drains
+**100% of the Microtask Queue** before taking the
+next Macrotask:
+`Sync Code -&gt; All Microtasks -&gt; Next Macrotask`</code></pre>
+          </div>
+          <div class="code-box">
+            <div class="code-header"><span>data/javascript/02-closures-scopes.md</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code># Closures, Lexical Scope &amp; Memory
+
+## Slide 1: Lexical Scoping &amp; Closure Definition
+A **closure** is a function bundled together with
+references to its surrounding lexical environment.
+
+## Slide 2: Practical Closure Patterns &amp; Loop Trap
+- Using `var` in a `for` loop shares ONE binding
+  across all `setTimeout` callbacks.
+- Using `let` creates a fresh block-scoped binding
+  per loop iteration.</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 5 -->
+      <section class="slide">
+        <span class="step-tag">Slide 05 / 16 • Shared Helper 1</span>
+        <h1>Loading Area Content: <code>src/shared/content-loader.js</code></h1>
+        <p class="lead">
+          <code>getAreaArg()</code> reads the area parameter from CLI (<code>node index.js javascript</code>), and <code>loadAreaContent(area, customContent)</code> loads either <code>data/[area]/*.md</code> or a passed <code>customContent</code> string.
+        </p>
+        <div class="code-box">
+          <div class="code-header"><span>src/shared/content-loader.js (Part 1 — Area &amp; File Loader)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code>import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+export const DATA_DIR = path.resolve(__dirname, '../../data');
+
+export function getAreaArg(defaultArea = 'javascript') {
+  const args = process.argv.slice(2).filter((a) =&gt; a !== '--demo');
+  for (const arg of args) {
+    if (arg.startsWith('--area=')) return arg.split('=')[1];
+    if (!arg.startsWith('-')) return arg;
+  }
+  return process.env.AREA || defaultArea;
+}
+
+export function loadAreaContent(area = 'javascript', customContent = '') {
+  const areaPath = path.join(DATA_DIR, area);
+  const files = [];
+  const chunks = [];
+
+  if (customContent &amp;&amp; customContent.trim()) {
+    files.push({ file: 'custom-parameter.md', content: customContent.trim() });
+    chunks.push(...chunkMarkdownContent(area, 'custom-parameter.md', customContent));
+  } else {
+    for (const entry of fs.readdirSync(areaPath, { withFileTypes: true })) {
+      if (!entry.isFile() || !/\.(md|txt)$/i.test(entry.name)) continue;
+      const raw = fs.readFileSync(path.join(areaPath, entry.name), 'utf-8');
+      files.push({ file: entry.name, content: raw.trim() });
+      chunks.push(...chunkMarkdownContent(area, entry.name, raw));
+    }
+  }
+  return { area, files, chunks };
+}</code></pre>
+        </div>
+      </section>
+
+      <!-- SLIDE 6 -->
+      <section class="slide">
+        <span class="step-tag">Slide 06 / 16 • Shared Helper 2</span>
+        <h1>Chunking &amp; Searching Area Notes: <code>src/shared/content-loader.js</code></h1>
+        <p class="lead">
+          <code>searchAreaContent({ area, query, topK, customContent })</code> ranks chunks by keyword matches in the section body and heading.
+        </p>
+        <div class="code-box">
+          <div class="code-header"><span>src/shared/content-loader.js (Part 2 — Keyword Search Engine)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code>export function searchAreaContent({ area = 'javascript', query = '', topK = 3, customContent = '' } = {}) {
+  const { area: resolvedArea, chunks } = loadAreaContent(area, customContent);
+  if (!query || !query.trim()) {
+    return { area: resolvedArea, query, results: chunks.slice(0, topK) };
+  }
+
+  const terms = query
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .split(/\s+/)
+    .filter((t) =&gt; t.length &gt;= 2);
+
+  const scored = chunks.map((chunk) =&gt; {
+    const haystack = `${chunk.docTitle} ${chunk.heading} ${chunk.content}`.toLowerCase();
+    let score = 0;
+    for (const term of terms) {
+      if (haystack.includes(term)) {
+        score += 1;
+        if (chunk.heading.toLowerCase().includes(term)) score += 1.5;
+      }
+    }
+    return { ...chunk, score: Number(score.toFixed(2)) };
+  });
+
+  scored.sort((a, b) =&gt; b.score - a.score);
+  return { area: resolvedArea, query, results: scored.slice(0, topK) };
+}</code></pre>
+        </div>
+      </section>
+
+      <!-- SLIDE 7 -->
+      <section class="slide">
+        <span class="step-tag">Slide 07 / 16 • Shared Helper 3</span>
+        <h1>Google ADK Local Ollama Adapter: <code>src/shared/ollama-llm.js</code></h1>
+        <p class="lead">
+          Extends <code>BaseLlm</code> from <code>@google/adk</code> and calls Ollama's <code>/api/chat</code> endpoint via native <code>fetch()</code>, translating ADK tool declarations and function calls automatically.
+        </p>
+        <div class="code-box">
+          <div class="code-header"><span>src/shared/ollama-llm.js</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code>import { BaseLlm, InMemoryRunner } from '@google/adk';
+
+export async function ollamaChat({ model = 'gemma4:e2b', messages, tools, format, options }) {
+  const res = await fetch('http://127.0.0.1:11434/api/chat', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ model, messages, tools, format, options, stream: false }),
+  });
+  return res.json();
+}
+
+export class OllamaGemmaLlm extends BaseLlm {
+  constructor({ model = 'gemma4:e2b', temperature = 0.2 } = {}) {
+    super({ model });
+    this.model = model;
+    this.temperature = temperature;
+  }
+
+  async *generateContentAsync(llmRequest) {
+    // 1. Convert llmRequest.contents &amp; llmRequest.config.tools to Ollama format
+    const response = await ollamaChat({
+      model: this.model,
+      messages,
+      tools: tools.length &gt; 0 ? tools : undefined,
+      options: { temperature: this.temperature },
+    });
+
+    const msg = response.message || {};
+    if (msg.tool_calls?.length) {
+      yield {
+        content: {
+          role: 'model',
+          parts: msg.tool_calls.map((tc) =&gt; ({
+            functionCall: { name: tc.function.name, args: tc.function.arguments },
+          })),
+        },
+      };
+      return;
+    }
+    yield { content: { role: 'model', parts: [{ text: msg.content || '' }] } };
+  }
+}</code></pre>
+        </div>
+      </section>
+
+      <!-- SLIDE 8 -->
+      <section class="slide">
+        <span class="step-tag">Slide 08 / 16 • Step 01: Setup &amp; Hello Gemma 4</span>
+        <h1>Execute Step 01: <code>cd step-01-setup &amp;&amp; node index.js &lt;area&gt;</code></h1>
+        <p class="lead">
+          Verifies the Ollama connection, lists all folders inside <code>data/</code>, loads the chosen <code>&lt;area&gt;</code> files, and runs a first turn through Google ADK's <code>LlmAgent</code>.
+        </p>
+        <div class="code-box">
+          <div class="code-header"><span>Terminal — Run Step 01 via package.json Scripts</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code>cd step-01-setup
+npm start javascript          # or: node index.js javascript
+
+# Or from the root folder:
+npm run step01 -- javascript</code></pre>
+        </div>
+        <div class="code-box">
+          <div class="code-header"><span>step-01-setup/index.js</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code>import 'dotenv/config';
+import { LlmAgent } from '@google/adk';
+import { OllamaGemmaLlm, runAgentTurn, ollamaListModels, DEFAULT_MODEL } from '../src/shared/ollama-llm.js';
+import { getAreaArg, listAreas, loadAreaContent } from '../src/shared/content-loader.js';
+
+const area = getAreaArg('javascript');
+const { files } = loadAreaContent(area);
+const tags = await ollamaListModels();
+
+const agent = new LlmAgent({
+  name: 'setup_check_agent',
+  model: new OllamaGemmaLlm({ model: DEFAULT_MODEL, temperature: 0.2 }),
+  instruction: `You are a concise study assistant for the "${area}" topic area.
+The student has loaded the following files from data/${area}/: ${files.map((f) =&gt; f.file).join(', ')}.
+Reply in 2 short sentences confirming you are ready to help with ${area}.`,
+});
+
+const reply = await runAgentTurn({
+  agent,
+  prompt: `Hello! Confirm you are online and mention one concept we can study in the "${area}" area.`,
+});
+console.log(reply);</code></pre>
+        </div>
+      </section>
+
+      <!-- SLIDE 9 -->
+      <section class="slide">
+        <span class="step-tag">Slide 09 / 16 • Step 02: Area Content RAG Tool</span>
+        <h1>Execute Step 02: <code>cd step-02-rag &amp;&amp; node index.js &lt;area&gt;</code></h1>
+        <p class="lead">
+          Wraps <code>searchAreaContent</code> inside an ADK <code>FunctionTool</code> so Gemma 4 automatically searches <code>data/[area]/</code> before answering.
+        </p>
+        <div class="code-box">
+          <div class="code-header"><span>Terminal — Run Step 02 via package.json Scripts</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code>cd ../step-02-rag
+npm start javascript          # or: node index.js javascript "microtask queue promise"
+
+# Or from the root folder:
+npm run step02 -- javascript</code></pre>
+        </div>
+        <div class="code-box">
+          <div class="code-header"><span>step-02-rag/index.js</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code>import { FunctionTool, LlmAgent } from '@google/adk';
+import { z } from 'zod';
+import { OllamaGemmaLlm, runAgentTurn, DEFAULT_MODEL } from '../src/shared/ollama-llm.js';
+import { getAreaArg, searchAreaContent } from '../src/shared/content-loader.js';
+
+export function createAreaSearchTool(area = 'javascript', customContent = '') {
+  return new FunctionTool({
+    name: 'search_area_content',
+    description: `Searches the study notes in data/${area}/ for relevant sections and examples.`,
+    parameters: z.object({
+      query: z.string().describe('Keywords or topic to search in the area markdown files'),
+    }),
+    execute: async ({ query }) =&gt; searchAreaContent({ area, query, topK: 3, customContent }),
+  });
+}
+
+const area = getAreaArg('javascript');
+const ragAgent = new LlmAgent({
+  name: 'area_rag_assistant',
+  model: new OllamaGemmaLlm({ model: DEFAULT_MODEL, temperature: 0.2 }),
+  tools: [createAreaSearchTool(area)],
+  instruction: `Always call "search_area_content" first to retrieve notes from data/${area}/ before answering. Cite the source file name.`,
+});</code></pre>
+        </div>
+      </section>
+
+      <!-- SLIDE 10 -->
+      <section class="slide">
+        <span class="step-tag">Slide 10 / 16 • Step 03: Structured Exam Generator</span>
+        <h1>Execute Step 03: <code>cd step-03-exam-gen &amp;&amp; node index.js &lt;area&gt;</code></h1>
+        <p class="lead">
+          Retrieves the top Markdown sections from <code>data/[area]/</code> and uses Ollama's structured JSON output (<code>format: EXAM_JSON_SCHEMA</code>) + Zod validation to generate a 20-point question and rubric.
+        </p>
+        <div class="code-box">
+          <div class="code-header"><span>Terminal — Run Step 03 via package.json Scripts</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code>cd ../step-03-exam-gen
+npm start javascript          # or: node index.js javascript "Event Loop and Closures"
+
+# Or from the root folder:
+npm run step03 -- cloud "Horizontal Scaling and Cache Stampede"</code></pre>
+        </div>
+        <div class="code-box">
+          <div class="code-header"><span>step-03-exam-gen/index.js</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code>export async function generateExamQuestion({ area = 'javascript', topic = '', customContent = '' } = {}) {
+  const rag = searchAreaContent({ area, query: topic || area, topK: 4, customContent });
+  const contextText = rag.results
+    .map((r) =&gt; `[Source: ${r.file} - ${r.heading}]\n${r.excerpt}`)
+    .join('\n\n');
+
+  const response = await ollamaChat({
+    model: DEFAULT_MODEL,
+    messages: [
+      {
+        role: 'system',
+        content: 'You are an exam designer. Return valid JSON matching the requested schema grounded strictly in the provided notes.',
+      },
+      {
+        role: 'user',
+        content: `Create a 20-point technical exam question for area "${area}"...\n\n${contextText}`,
+      },
+    ],
+    format: EXAM_JSON_SCHEMA,
+    options: { temperature: 0.2 },
+  });
+
+  const parsed = JSON.parse(response.message.content);
+  parsed.area = area;
+  parsed.totalPoints = 20;
+  return ExamQuestionSchema.parse(parsed);
+}</code></pre>
+        </div>
+      </section>
+
+      <!-- SLIDE 11 -->
+      <section class="slide">
+        <span class="step-tag">Slide 11 / 16 • Step 04: Socratic Study Mentor</span>
+        <h1>Execute Step 04: <code>cd step-04-socratic-agent &amp;&amp; node index.js &lt;area&gt;</code></h1>
+        <p class="lead">
+          Creates a multi-turn Socratic Study Mentor agent equipped with <code>createAreaSearchTool(area)</code> that guides the student with hints and a single follow-up question instead of giving away the answer.
+        </p>
+        <div class="code-box">
+          <div class="code-header"><span>Terminal — Run Step 04 in CLI or Launch ADK Web UI</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code>cd ../step-04-socratic-agent
+npm start javascript          # Run CLI multi-turn demo
+npm run web                   # Launch ADK DevTools Web UI on http://localhost:8000
+
+# Or from the root folder:
+npm run step04 -- javascript
+npm run step04:web</code></pre>
+        </div>
+        <div class="code-box">
+          <div class="code-header"><span>step-04-socratic-agent/index.js</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code>import { InMemoryRunner, LlmAgent } from '@google/adk';
+import { OllamaGemmaLlm, runAgentTurn, DEFAULT_MODEL } from '../src/shared/ollama-llm.js';
+import { loadAreaContent } from '../src/shared/content-loader.js';
+import { createAreaSearchTool } from '../step-02-rag/index.js';
+
+export function createSocraticMentorAgent({ area = 'javascript', customContent = '' } = {}) {
+  const { files } = loadAreaContent(area, customContent);
+  const fileList = files.map((f) =&gt; f.file).join(', ');
+  const searchTool = createAreaSearchTool(area, customContent);
+
+  return new LlmAgent({
+    name: 'socratic_study_mentor',
+    model: new OllamaGemmaLlm({ model: DEFAULT_MODEL, temperature: 0.3 }),
+    tools: [searchTool],
+    instruction: `You are a Socratic Study Mentor for the "${area}" study area (files: ${fileList}).
+Rules:
+1. NEVER give the complete final exam answer immediately.
+2. Use the "search_area_content" tool to check the study notes in data/${area}/ when needed.
+3. Give a brief, encouraging conceptual hint (2-4 sentences) and end with ONE guiding question.`,
+  });
+}
+
+// Exported for `adk web` (Google ADK DevTools Web UI)
+export const rootAgent = createSocraticMentorAgent({
+  area: process.env.AREA || 'javascript',
+});</code></pre>
+        </div>
+      </section>
+
+      <!-- SLIDE 12 -->
+      <section class="slide">
+        <span class="step-tag">Slide 12 / 16 • Step 05: Deterministic Rubric Grader</span>
+        <h1>Execute Step 05: <code>cd step-05-grading-complete &amp;&amp; node index.js &lt;area&gt;</code></h1>
+        <p class="lead">
+          Evaluates a student's Markdown answer against each criterion in the exam rubric and the reference chunks in <code>data/[area]/</code>, returning per-criterion points, justifications, and improvement tips.
+        </p>
+        <div class="code-box">
+          <div class="code-header"><span>Terminal — Run Step 05 via package.json Scripts</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code>cd ../step-05-grading-complete
+npm start javascript          # or: node index.js javascript
+
+# Or from the root folder:
+npm run step05 -- javascript</code></pre>
+        </div>
+        <div class="code-box">
+          <div class="code-header"><span>step-05-grading-complete/index.js</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code>export async function evaluateStudentAnswer({ area = 'javascript', exam, studentAnswer, customContent = '' }) {
+  const rag = searchAreaContent({ area, query: exam.questionPrompt, topK: 3, customContent });
+  const referenceNotes = rag.results.map((r) =&gt; `[${r.file} - ${r.heading}]\n${r.excerpt}`).join('\n\n');
+
+  const response = await ollamaChat({
+    model: DEFAULT_MODEL,
+    messages: [
+      { role: 'system', content: 'You are a fair, deterministic technical exam grader. Return only valid JSON.' },
+      {
+        role: 'user',
+        content: `EXAM QUESTION:\n${exam.questionPrompt}\n\nRUBRIC:\n${JSON.stringify(exam.rubric)}\n\nREFERENCE NOTES (data/${area}/):\n${referenceNotes}\n\nSTUDENT ANSWER:\n${studentAnswer}`,
+      },
+    ],
+    format: EVALUATION_JSON_SCHEMA,
+    options: { temperature: 0.1 },
+  });
+
+  const parsed = JSON.parse(response.message.content);
+  parsed.totalAwarded = (parsed.criterionScores || []).reduce((s, c) =&gt; s + Number(c.awardedPoints || 0), 0);
+  parsed.totalPossible = (exam.rubric || []).reduce((s, r) =&gt; s + r.maxPoints, 0) || 20;
+  parsed.percentage = Math.round((parsed.totalAwarded / parsed.totalPossible) * 100);
+  return EvaluationSchema.parse(parsed);
+}</code></pre>
+        </div>
+      </section>
+
+      <!-- SLIDE 13 -->
+      <section class="slide">
+        <span class="step-tag">Slide 13 / 16 • Step 05 Express API Server</span>
+        <h1>Backend API Server: <code>step-05-grading-complete/server.js</code></h1>
+        <p class="lead">
+          Connects Steps 02, 03, 04, and 05 to the React Web Interface. Every route accepts <code>area</code> (folder inside <code>data/</code>) and optional <code>customContent</code> (raw Markdown string).
+        </p>
+        <div class="code-box">
+          <div class="code-header"><span>step-05-grading-complete/server.js</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code>// 1. Status &amp; available data/[area] folders
+app.get('/api/status', async (req, res) =&gt; {
+  const area = req.query.area || 'javascript';
+  const areaData = loadAreaContent(area);
+  res.json({ ollamaReachable: true, areas: listAreas(), currentArea: areaData.area, files: areaData.files });
+});
+
+// 2. RAG Search over data/[area]/ or customContent parameter
+app.post('/api/rag/search', (req, res) =&gt; {
+  const { area = 'javascript', query = '', topK = 4, customContent = '' } = req.body || {};
+  res.json(searchAreaContent({ area, query, topK, customContent }));
+});
+
+// 3. Exam Question Generator
+app.post('/api/exam/generate', async (req, res) =&gt; {
+  const { area = 'javascript', topic = '', customContent = '' } = req.body || {};
+  res.json({ exam: await generateExamQuestion({ area, topic, customContent }) });
+});
+
+// 4. Socratic Study Mentor Chat &amp; 5. Rubric Grader
+app.post('/api/socratic/chat', async (req, res) =&gt; { /* runs createSocraticMentorAgent({ area, customContent }) */ });
+app.post('/api/grade/evaluate', async (req, res) =&gt; { /* runs evaluateStudentAnswer({ area, exam, studentAnswer, customContent }) */ });</code></pre>
+        </div>
+      </section>
+
+      <!-- SLIDE 14 -->
+      <section class="slide">
+        <span class="step-tag">Slide 14 / 16 • React Question Interface: Area &amp; Content Parameters</span>
+        <h1>Passing Content as a Parameter in <code>question-interface/src/App.jsx</code></h1>
+        <p class="lead">
+          You can pass the area folder via URL (<code>?area=javascript</code>, <code>?area=ai-agents</code>, <code>?area=cloud</code>), switch it via the header dropdown, or pass raw Markdown via <code>?content=...</code> / the <strong>+ Pass Custom Content Parameter</strong> drawer.
+        </p>
+        <div class="code-box">
+          <div class="code-header"><span>question-interface/src/App.jsx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code>function getInitialAreaFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('area') || 'javascript';
+}
+
+function getInitialContentFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('content') || '';
+}
+
+export function App() {
+  const [area, setArea] = useState(getInitialAreaFromUrl);
+  const [customContent, setCustomContent] = useState(getInitialContentFromUrl);
+
+  const handleSelectArea = (nextArea) =&gt; {
+    setArea(nextArea);
+    const url = new URL(window.location.href);
+    url.searchParams.set('area', nextArea);
+    window.history.replaceState({}, '', url.toString());
+  };
+
+  // Every API request passes { area, customContent: customContent || undefined }
+}</code></pre>
+        </div>
+      </section>
+
+      <!-- SLIDE 15 -->
+      <section class="slide">
+        <span class="step-tag">Slide 15 / 16 • React Question Interface: Markdown Previews</span>
+        <h1>Markdown Preview Boxes: <code>question-interface/src/components/MarkdownPreview.jsx</code></h1>
+        <p class="lead">
+          All scenarios, question prompts, rubric criteria, Socratic chat messages, and RAG excerpts use <code>&lt;MarkdownPreview /&gt;</code>, while student answers and chat inputs use <code>&lt;MarkdownBox defaultMode="preview" /&gt;</code> with <strong>Markdown Preview / Split / Edit MD</strong> tabs.
+        </p>
+        <div class="code-box">
+          <div class="code-header"><span>question-interface/src/components/MarkdownPreview.jsx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code>export function MarkdownBox({
+  label,
+  badge,
+  value,
+  onChange,
+  placeholder = 'Write Markdown here...',
+  rows = 6,
+  defaultMode = 'preview',
+  readOnly = false,
+}) {
+  const [mode, setMode] = useState(defaultMode);
+  const effectiveMode = readOnly ? 'preview' : mode;
+
+  return (
+    &lt;div className="md-box-wrapper"&gt;
+      &lt;div className="md-box-toolbar"&gt;
+        &lt;span&gt;{label}&lt;/span&gt;
+        {!readOnly &amp;&amp; (
+          &lt;div className="md-mode-tabs"&gt;
+            {['preview', 'split', 'edit'].map((tab) =&gt; (
+              &lt;button key={tab} onClick={() =&gt; setMode(tab)} className={effectiveMode === tab ? 'active' : ''}&gt;
+                {tab === 'preview' ? 'Markdown Preview' : tab === 'split' ? 'Split' : 'Edit MD'}
+              &lt;/button&gt;
+            ))}
+          &lt;/div&gt;
+        )}
+      &lt;/div&gt;
+      {effectiveMode === 'preview' &amp;&amp; &lt;MarkdownPreview content={value} emptyPlaceholder={placeholder} /&gt;}
+      {effectiveMode === 'edit' &amp;&amp; &lt;textarea rows={rows} value={value} onChange={(e) =&gt; onChange(e.target.value)} /&gt;}
+    &lt;/div&gt;
+  );
+}</code></pre>
+        </div>
+      </section>
+
+      <!-- SLIDE 16 -->
+      <section class="slide">
+        <span class="step-tag">Slide 16 / 16 • Complete Execution Cheat Sheet</span>
+        <h1>Running Every Step &amp; Launching the React Web Interface</h1>
+        <p class="lead">
+          Enter any folder to run it standalone with <code>node index.js &lt;area&gt;</code>, or launch the full-stack React web interface.
+        </p>
+        <div class="grid-2">
+          <div class="code-box">
+            <div class="code-header"><span>Run Individual Steps (Step or Root package.json)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code># Inside each step folder:
+cd step-01-setup &amp;&amp; npm start javascript
+cd ../step-02-rag &amp;&amp; npm start javascript
+cd ../step-03-exam-gen &amp;&amp; npm start javascript
+cd ../step-04-socratic-agent &amp;&amp; npm start javascript
+cd ../step-04-socratic-agent &amp;&amp; npm run web    # Launch ADK Web UI (:8000)
+cd ../step-05-grading-complete &amp;&amp; npm start javascript
+
+# Or from root package.json:
+npm run step01 -- javascript
+npm run step02 -- ai-agents
+npm run step03 -- cloud
+npm run step04 -- javascript
+npm run step04:web                             # Launch ADK Web UI (:8000)
+npm run step05 -- javascript
+npm run test:all -- javascript</code></pre>
+          </div>
+          <div class="code-box">
+            <div class="code-header"><span>Run Web UI + API Server + Slides (concurrently)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code># Run API Server + React UI + Slides concurrently:
+npm run dev
+
+# Which executes via concurrently:
+# - npm run server  (Express API on http://localhost:3000)
+# - npm run ui      (React Vite UI on http://localhost:5173)
+# - npm run slides  (Slide Deck on http://localhost:3030)
+
+# Open UI with any data/[area] parameter:
+# http://localhost:5173/?area=javascript
+# http://localhost:5173/?area=ai-agents
+# http://localhost:5173/?area=cloud</code></pre>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="slide-footer">
+      <div>
+        <strong>GDG Lisbon</strong> • Google Developer Groups Lisbon • Workshop by Nuno Andrade
+      </div>
+      <div class="gdg-pills">
+        <span class="gdg-pill blue">Google ADK</span>
+        <span class="gdg-pill red">Gemma 4</span>
+        <span class="gdg-pill yellow">JavaScript</span>
+        <span class="gdg-pill green">React + Ollama</span>
+      </div>
+    </footer>
+
+    <script>
+      let currentSlide = 0;
+      let showAll = false;
+      const slides = Array.from(document.querySelectorAll('.slide'));
+      const counterEl = document.getElementById('slideCounter');
+      const progressEl = document.getElementById('progressBar');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const modeBtn = document.getElementById('modeBtn');
+
+      function renderSlide() {
+        if (showAll) return;
+        slides.forEach((s, idx) => s.classList.toggle('active', idx === currentSlide));
+        counterEl.textContent = `${currentSlide + 1} / ${slides.length}`;
+        progressEl.style.width = `${((currentSlide + 1) / slides.length) * 100}%`;
+        prevBtn.disabled = currentSlide === 0;
+        nextBtn.disabled = currentSlide === slides.length - 1;
+      }
+
+      function changeSlide(delta) {
+        if (showAll) toggleAllMode();
+        const next = currentSlide + delta;
+        if (next >= 0 && next < slides.length) {
+          currentSlide = next;
+          renderSlide();
+        }
+      }
+
+      function toggleAllMode() {
+        showAll = !showAll;
+        document.body.classList.toggle('slide-All', showAll);
+        modeBtn.textContent = showAll ? 'Single Slide View' : 'Scroll All Slides';
+        if (!showAll) renderSlide();
+      }
+
+      function copyCode(btn) {
+        const pre = btn.closest('.code-box').querySelector('pre');
+        navigator.clipboard.writeText(pre.innerText).then(() => {
+          const orig = btn.textContent;
+          btn.textContent = 'Copied!';
+          setTimeout(() => (btn.textContent = orig), 1200);
+        });
+      }
+
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === 'PageDown') changeSlide(1);
+        if (e.key === 'ArrowLeft' || e.key === 'PageUp') changeSlide(-1);
+      });
+
+      renderSlide();
+    </script>
+  </body>
+</html>

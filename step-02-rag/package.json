@@ -1,0 +1,9 @@
+{
+  "name": "step-02-rag",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Step 02: Area Content RAG Engine over data/[area]/[content files]",
+  "scripts": {
+    "start": "node index.js"
+  }
+}

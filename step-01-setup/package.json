@@ -1,0 +1,9 @@
+{
+  "name": "step-01-setup",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Step 01: Google ADK + Ollama/Gemma 4 Local Setup in JavaScript",
+  "scripts": {
+    "start": "node index.js"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "name": "gemma4-adk-examprep-workshop",
+  "version": "1.0.0",
+  "description": "Simple JavaScript Workshop: AI Exam Prep with Google ADK & Local Gemma 4 using data/[area]/[content files]",
+  "type": "module",
+  "private": true,
+  "workspaces": [
+    "step-01-setup",
+    "step-02-rag",
+    "step-03-exam-gen",
+    "step-04-socratic-agent",
+    "step-05-grading-complete",
+    "question-interface"
+  ],
+  "scripts": {
+    "dev": "concurrently -n api,ui,slides -c green,cyan,magenta \"npm run server\" \"npm run ui\" \"npm run slides\"",
+    "step01": "node step-01-setup/index.js",
+    "step02": "node step-02-rag/index.js",
+    "step03": "node step-03-exam-gen/index.js",
+    "step04": "node step-04-socratic-agent/index.js",
+    "step04:web": "adk web step-04-socratic-agent/index.js --compile false --bundle false",
+    "step05": "node step-05-grading-complete/index.js",
+    "server": "node step-05-grading-complete/server.js",
+    "ui": "npm --prefix question-interface run dev",
+    "ui:build": "npm --prefix question-interface run build",
+    "slides": "node src/shared/serve-slides.js",
+    "test:all": "node src/shared/test-all.js"
+  },
+  "dependencies": {
+    "@google/adk": "^0.6.1",
+    "@google/genai": "^1.30.0",
+    "@opentelemetry/api": "1.9.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^5.1.0",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@google/adk-devtools": "^0.6.1",
+    "concurrently": "^9.2.1"
+  }
+}
