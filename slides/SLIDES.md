@@ -3,13 +3,13 @@
 **Community:** Google Developer Groups (GDG) Lisbon
 **Speaker:** Nuno Andrade
 **Theme:** Google Light / White Background (`#FFFFFF` / `#F8F9FA` • `#4285F4` `#EA4335` `#FBBC04` `#34A853`)
-**Stack:** Plain JavaScript (ES Modules, Node.js 22+) • `@google/adk` • Local Ollama (`gemma4:e2b`) • React + Vite (`question-interface`)
+**Stack:** Plain JavaScript (ES Modules, Node.js 22+) • `@google/adk` • Local Ollama (`gemma4:e2b`) • OpenAPI 3.0.3 (`step-05`) • IADE-Inspired React + Vite (`step-06-web-ui`)
 
 ---
 
 ## Slide 1 — Workshop Architecture & Folder Structure
 
-Every step lives in its own folder (`step-01-setup` to `step-05-grading-complete`), study notes live in `data/[area]/[content files]`, and the React UI lives in `question-interface/`:
+Every step lives in its own folder (`step-01-setup` to `step-05-grading-complete`), study notes live in `data/[area]/[content files]`, and **Step 06 (Optional)** provides an IADE-inspired React Web UI (`step-06-web-ui/`):
 
 ```text
 examprep/
@@ -30,8 +30,8 @@ examprep/
 ├── step-02-rag/                  # cd step-02-rag && node index.js <area>
 ├── step-03-exam-gen/             # cd step-03-exam-gen && node index.js <area>
 ├── step-04-socratic-agent/       # cd step-04-socratic-agent && node index.js <area>
-├── step-05-grading-complete/     # cd step-05-grading-complete && node index.js <area>
-└── question-interface/           # React + Vite Web UI (?area=javascript)
+├── step-05-grading-complete/     # Rubric grader + Express API + OpenAPI/Swagger on /
+└── step-06-web-ui/               # (Optional) IADE-inspired React Web UI (:5173 -> :3000)
 ```
 
 ---
@@ -81,7 +81,7 @@ Root `package.json` uses `"type": "module"`, npm workspaces, and convenient scri
     "step-03-exam-gen",
     "step-04-socratic-agent",
     "step-05-grading-complete",
-    "question-interface"
+    "step-06-web-ui"
   ],
   "scripts": {
     "dev": "concurrently -n api,ui,slides -c green,cyan,magenta \"npm run server\" \"npm run ui\" \"npm run slides\"",
@@ -91,9 +91,10 @@ Root `package.json` uses `"type": "module"`, npm workspaces, and convenient scri
     "step04": "node step-04-socratic-agent/index.js",
     "step04:web": "adk web step-04-socratic-agent/index.js --compile false --bundle false",
     "step05": "node step-05-grading-complete/index.js",
+    "step06": "node step-06-web-ui/index.js",
     "server": "node step-05-grading-complete/server.js",
-    "ui": "npm --prefix question-interface run dev",
-    "ui:build": "npm --prefix question-interface run build",
+    "ui": "npm --prefix step-06-web-ui run dev",
+    "ui:build": "npm --prefix step-06-web-ui run build",
     "slides": "node src/shared/serve-slides.js",
     "test:all": "node src/shared/test-all.js"
   }
@@ -453,102 +454,63 @@ export async function evaluateStudentAnswer({ area = 'javascript', exam, student
 
 ---
 
-## Slide 13 — Step 05 Express Server (`step-05-grading-complete/server.js`)
+## Slide 13 — Step 05 Express Server & OpenAPI (Swagger) on Root (`step-05-grading-complete/server.js`)
 
-Exposes REST endpoints that accept `area` (`data/[area]/`) and optional `customContent` parameters:
+Exposes interactive **OpenAPI 3.0.3 (Swagger)** documentation on `GET /` (plus `/openapi.json` & `/swagger.json`) and REST endpoints that accept `area` (`data/[area]/`) and optional `customContent`:
 
 ```bash
 cd step-05-grading-complete
 npm run server
-# Listening on http://localhost:3000
+# Swagger UI: http://localhost:3000/ | OpenAPI JSON: http://localhost:3000/openapi.json
 ```
 
 ```javascript
 // step-05-grading-complete/server.js
-app.get('/api/status', async (req, res) => {
-  const area = req.query.area || 'javascript';
-  const areaData = loadAreaContent(area);
-  res.json({ areas: listAreas(), currentArea: areaData.area, files: areaData.files });
+app.get(['/openapi.json', '/swagger.json'], (req, res) => {
+  res.json(buildOpenApiSpec(`${req.protocol}://${req.get('host')}`));
 });
 
-app.post('/api/rag/search', (req, res) => {
-  const { area = 'javascript', query = '', topK = 4, customContent = '' } = req.body;
-  res.json(searchAreaContent({ area, query, topK, customContent }));
+app.get('/', (req, res) => {
+  const spec = buildOpenApiSpec(`${req.protocol}://${req.get('host')}`);
+  if ((req.headers.accept || '').includes('text/html')) {
+    return res.type('html').send(renderSwaggerUiHtml(spec));
+  }
+  return res.json(spec);
 });
 
-app.post('/api/exam/generate', async (req, res) => {
-  const { area = 'javascript', topic = '', customContent = '' } = req.body;
-  res.json({ exam: await generateExamQuestion({ area, topic, customContent }) });
-});
-
-app.post('/api/socratic/chat', async (req, res) => { /* ... */ });
-app.post('/api/grade/evaluate', async (req, res) => { /* ... */ });
+app.get('/api/status', async (req, res) => { /* lists data/[area] folders & files */ });
+app.post('/api/rag/search', (req, res) => { /* searchAreaContent({ area, query, topK }) */ });
+app.post('/api/exam/generate', async (req, res) => { /* generateExamQuestion({ area, topic }) */ });
+app.post('/api/socratic/chat', async (req, res) => { /* Socratic Mentor turn */ });
+app.post('/api/grade/evaluate', async (req, res) => { /* evaluateStudentAnswer(...) */ });
 ```
 
 ---
 
-## Slide 14 — React Web Interface: Passing `area` & `customContent` Parameters
+## Slide 14 — Step 06 (Optional): IADE-Inspired React Student Web UI (`step-06-web-ui/`)
 
-In `question-interface/src/App.jsx`, the active `area` and optional `customContent` are read from URL query parameters (`?area=javascript&content=...`) and synced with the Header controls:
+Inspired by the official **IADE** website (`#000000` header, `#3cdbc0` turquoise, `#f000ff` magenta, `#0047bb` royal blue, `Lato` typography). Students select an `<area>`, generate questions via the Step 05 API, ask the Socratic Coach, and submit answers for grading:
 
 ```jsx
-// question-interface/src/App.jsx
-function getInitialAreaFromUrl() {
-  const params = new URLSearchParams(window.location.search);
-  return params.get('area') || 'javascript';
-}
-
+// step-06-web-ui/src/App.jsx
 export function App() {
   const [area, setArea] = useState(getInitialAreaFromUrl);
-  const [customContent, setCustomContent] = useState(
-    () => new URLSearchParams(window.location.search).get('content') || ''
-  );
 
-  const handleSelectArea = (nextArea) => {
+  const handleSelectArea = (nextArea, autoGenerate = false) => {
     setArea(nextArea);
-    const url = new URL(window.location.href);
-    url.searchParams.set('area', nextArea);
-    window.history.replaceState({}, '', url.toString());
+    // Syncs ?area=<area> in URL & loads area questions or triggers POST /api/exam/generate
   };
-  // Passes { area, customContent } to /api/rag/search, /api/exam/generate, /api/socratic/chat, /api/grade/evaluate
-}
-```
-
----
-
-## Slide 15 — React Web Interface: `<MarkdownPreview />` & `<MarkdownBox />`
-
-Most boxes in the UI render formatted Markdown by default, with `Markdown Preview | Split | Edit MD` tabs on editable boxes:
-
-```jsx
-// question-interface/src/components/MarkdownPreview.jsx
-export function MarkdownBox({
-  label,
-  badge,
-  value,
-  onChange,
-  defaultMode = 'preview',
-  readOnly = false,
-}) {
-  const [mode, setMode] = useState(defaultMode);
-  const effectiveMode = readOnly ? 'preview' : mode;
 
   return (
-    <div className="md-box-wrapper">
-      <div className="md-box-toolbar">
-        <span>{label}</span>
-        {!readOnly && (
-          <div className="md-mode-tabs">
-            {['preview', 'split', 'edit'].map((tab) => (
-              <button key={tab} onClick={() => setMode(tab)}>
-                {tab === 'preview' ? 'Markdown Preview' : tab === 'split' ? 'Split' : 'Edit MD'}
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-      {effectiveMode === 'preview' && <MarkdownPreview content={value} />}
-      {effectiveMode === 'edit' && <textarea value={value} onChange={(e) => onChange(e.target.value)} />}
+    <div className="iade-app">
+      <Header area={area} availableAreas={availableAreas} onSelectArea={handleSelectArea} />
+      <AreaSelectorHero
+        area={area}
+        availableAreas={availableAreas}
+        onSelectArea={handleSelectArea}
+        onGenerateExam={handleGenerateExam}
+      />
+      {/* Step 1: Answer Exam Question | Step 2: Socratic Coach | Step 3: Rubric Evaluation */}
     </div>
   );
 }
@@ -556,24 +518,40 @@ export function MarkdownBox({
 
 ---
 
-## Slide 16 — Running Everything End-to-End
+## Slide 15 — Step 06 (Optional): Area Selector Hero & `<MarkdownBox />` Components
+
+Students click any area card (`javascript`, `ai-agents`, `cloud`) in `AreaSelectorHero.jsx` to fetch a 20-point exam question from `POST /api/exam/generate` and write their answer in `<MarkdownBox />`:
+
+```jsx
+// step-06-web-ui/src/components/AreaSelectorHero.jsx
+{areasToRender.map((areaName) => (
+  <div key={areaName} className="iade-area-card" onClick={() => onSelectArea(areaName, false)}>
+    <div className="iade-area-card__folder">data/{areaName}/</div>
+    <h3 className="iade-area-card__title">{meta.title}</h3>
+    <div className="iade-area-card__actions">
+      <button onClick={() => onSelectArea(areaName, false)}>Select Area</button>
+      <button onClick={() => onSelectArea(areaName, true)}>Generate Question via API →</button>
+    </div>
+  </div>
+))}
+```
+
+---
+
+## Slide 16 — Running Steps 01–05 & Step 06 (Optional React Web UI)
 
 ```bash
-# Run any step from its folder:
+# Run any core step (01 - 05) from its folder:
 cd step-01-setup && npm start javascript
 cd ../step-02-rag && npm start javascript
 cd ../step-03-exam-gen && npm start javascript
 cd ../step-04-socratic-agent && npm start javascript
 cd ../step-05-grading-complete && npm start javascript
 
-# Or run from the root package.json scripts:
-npm run step01 -- javascript
-npm run step02 -- ai-agents
-npm run step03 -- cloud
-npm run step04 -- javascript
-npm run step05 -- javascript
-npm run test:all -- javascript
+# Start Step 05 API Server with OpenAPI (Swagger) on http://localhost:3000/:
+cd ../step-05-grading-complete && npm run server
 
-# Run Web UI + API Server + Slides together with concurrently:
-npm run dev
+# Launch Step 06 (Optional) IADE React Web UI (auto-starts Step 05 API if needed):
+cd ../step-06-web-ui && npm start
+# Or from root: npm run step06   (or: npm run dev)
 ```

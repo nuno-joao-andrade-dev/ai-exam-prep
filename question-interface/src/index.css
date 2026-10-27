@@ -1,17 +1,46 @@
+/* ==========================================================================
+   IADE — Faculdade de Design, Tecnologia e Comunicação Inspired Design System
+   Step 06 (Optional): Student Exam & Socratic Web Interface
+   Source palette & tokens adapted from https://www.iade.europeia.pt/
+   ========================================================================== */
+
 :root {
-  --bg-dark: #0A0E17;
-  --bg-surface: #111827;
-  --bg-elevated: #1a2234;
-  --border: #263248;
-  --border-focus: #4285F4;
-  --text-main: #F8FAFC;
-  --text-muted: #94A3B8;
-  --g-blue: #4285F4;
-  --g-red: #EA4335;
-  --g-yellow: #FBBC04;
-  --g-green: #34A853;
-  --font-sans: 'Google Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-primary: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
+
+  /* Official IADE Brand Tokens */
+  --brand1: #000000;          /* Stark Black */
+  --brand2: #3cdbc0;          /* Electric Mint / Turquoise */
+  --brand3: #0047bb;          /* Deep Electric Cobalt Blue */
+  --brand4: #f000ff;          /* Creative Magenta Accent */
+  --brand5: #ffffff;          /* Pure White */
+
+  /* Official IADE UI Surfaces */
+  --ui01: #ffffff;
+  --ui02: #eeeff2;
+  --ui03: #0047bb;
+  --ui04: #eeeff2;
+  --ui05: #243135;            /* Architectural Dark Slate-Teal */
+  --ui06: #f000ff;
+  --ui17: #ededed;
+  --ui18: #ecf3fd;            /* Soft Cobalt Blue Tint */
+
+  /* Official IADE Interactive Tokens */
+  --interactive01: #3cdbc0;
+  --interactive01Hover: #63e2cd;
+  --interactive01Active: #36c5ad;
+  --interactive02Focus: #ccfaf2;
+  --interactive05: #0047bb;
+  --interactive05Hover: #236be0;
+
+  /* Text & Borders */
+  --text-primary: #000000;
+  --text-secondary: #243135;
+  --text-muted: #5a686c;
+  --border-light: #d6d6d6;
+  --border-strong: #000000;
+  --danger: #de2b31;
+  --success: #0d9488;
 }
 
 * {
@@ -20,183 +49,870 @@
   padding: 0;
 }
 
+html,
 body {
-  font-family: var(--font-sans);
-  background-color: var(--bg-dark);
-  color: var(--text-main);
-  min-height: 100vh;
-  line-height: 1.5;
+  font-family: var(--font-primary);
+  background-color: var(--ui02);
+  color: var(--text-primary);
+  min-height: 100%;
+  width: 100%;
+  line-height: 1.55;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Azulejo background motif */
-.azulejo-pattern {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0.035;
-  background-image:
-    radial-gradient(circle at 25px 25px, var(--g-blue) 2px, transparent 0),
-    radial-gradient(circle at 75px 75px, var(--g-yellow) 2px, transparent 0),
-    linear-gradient(45deg, transparent 48%, var(--g-blue) 49%, var(--g-blue) 51%, transparent 52%),
-    linear-gradient(-45deg, transparent 48%, var(--g-blue) 49%, var(--g-blue) 51%, transparent 52%);
-  background-size: 100px 100px;
+a {
+  color: inherit;
+  text-decoration: none;
 }
 
-/* Google Ribbon */
-.google-ribbon {
-  height: 4px;
-  width: 100%;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 100;
-}
-.google-ribbon div:nth-child(1) { background: var(--g-blue); }
-.google-ribbon div:nth-child(2) { background: var(--g-red); }
-.google-ribbon div:nth-child(3) { background: var(--g-yellow); }
-.google-ribbon div:nth-child(4) { background: var(--g-green); }
-
-/* Layout */
-.app-container {
-  position: relative;
-  z-index: 1;
-  max-width: 1240px;
-  margin: 0 auto;
-  padding: 24px 20px 60px;
-}
-
-/* Buttons */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 18px;
-  border-radius: 8px;
-  font-family: var(--font-sans);
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  border: 1px solid transparent;
-  transition: all 0.2s ease;
-}
-.btn-primary {
-  background: var(--g-blue);
-  color: white;
-}
-.btn-primary:hover {
-  background: #3367d6;
-  box-shadow: 0 0 16px rgba(66, 133, 244, 0.4);
-}
-.btn-secondary {
-  background: var(--bg-elevated);
-  border-color: var(--border);
-  color: var(--text-main);
-}
-.btn-secondary:hover {
-  border-color: var(--border-focus);
-  background: #232d44;
-}
-.btn-success {
-  background: var(--g-green);
-  color: white;
-}
-.btn-success:hover {
-  background: #2d9247;
-}
-
-/* Badges & Pills */
-.pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 10px;
-  border-radius: 9999px;
-  font-size: 12px;
-  font-weight: 600;
+code,
+pre {
   font-family: var(--font-mono);
-}
-.pill-blue { background: rgba(66, 133, 244, 0.15); color: #93C5FD; border: 1px solid rgba(66, 133, 244, 0.3); }
-.pill-green { background: rgba(52, 168, 83, 0.15); color: #86EFAC; border: 1px solid rgba(52, 168, 83, 0.3); }
-.pill-red { background: rgba(234, 67, 53, 0.15); color: #FCA5A5; border: 1px solid rgba(234, 67, 53, 0.3); }
-.pill-yellow { background: rgba(251, 188, 4, 0.15); color: #FDE047; border: 1px solid rgba(251, 188, 4, 0.3); }
-
-/* Code and Form */
-code, pre {
-  font-family: var(--font-mono);
-}
-
-textarea, input, select {
-  font-family: var(--font-sans);
-  background: #070B14;
-  border: 1px solid var(--border);
-  color: var(--text-main);
-  border-radius: 8px;
-  padding: 12px 14px;
-  outline: none;
-  font-size: 14px;
-  transition: border-color 0.2s;
-}
-textarea:focus, input:focus, select:focus {
-  border-color: var(--g-blue);
-  box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
-}
-
-/* Animations */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.animate-fade {
-  animation: fadeIn 0.25s ease-out forwards;
 }
 
 /* ==========================================================================
-   Markdown Preview & MarkdownBox Styles
+   IADE Top Utility Bar & Main Navbar
+   ========================================================================== */
+.iade-navbar-wrapper {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--brand5);
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
+}
+
+.iade-utility-bar {
+  background: var(--ui04);
+  border-bottom: 1px solid var(--border-light);
+  font-size: 12.5px;
+  color: var(--ui05);
+}
+
+.iade-utility-inner {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 7px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.iade-utility-links {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  list-style: none;
+}
+
+.iade-utility-links a,
+.iade-utility-links span {
+  font-weight: 400;
+  color: var(--ui05);
+  position: relative;
+  padding-bottom: 2px;
+  transition: color 0.2s ease;
+}
+
+.iade-utility-links a:hover {
+  color: var(--brand3);
+}
+
+.iade-utility-links a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 1px;
+  width: 0;
+  background: var(--brand3);
+  transition: width 0.25s ease;
+}
+
+.iade-utility-links a:hover::after {
+  width: 100%;
+}
+
+.iade-utility-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.iade-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--brand5);
+  border: 1px solid var(--border-light);
+  padding: 3px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--brand1);
+}
+
+.iade-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.iade-status-dot.online {
+  background: var(--brand2);
+  box-shadow: 0 0 0 3px rgba(60, 219, 192, 0.3);
+}
+
+.iade-status-dot.offline {
+  background: var(--danger);
+}
+
+.iade-main-nav {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+  background: var(--brand5);
+}
+
+.iade-brand-group {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.iade-logo-svg {
+  height: 44px;
+  width: auto;
+  display: block;
+}
+
+.iade-brand-divider {
+  width: 1px;
+  height: 34px;
+  background: var(--border-light);
+}
+
+.iade-portal-badge {
+  display: flex;
+  flex-direction: column;
+}
+
+.iade-portal-kicker {
+  font-size: 10.5px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--brand3);
+}
+
+.iade-portal-title {
+  font-size: 15px;
+  font-weight: 900;
+  color: var(--brand1);
+  letter-spacing: -0.01em;
+}
+
+.iade-nav-areas {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.iade-nav-area-btn {
+  position: relative;
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 8px 16px;
+  font-family: var(--font-primary);
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--brand1);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.iade-nav-area-btn::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 12px;
+  right: 12px;
+  height: 3px;
+  background: transparent;
+  transition: background 0.2s ease;
+}
+
+.iade-nav-area-btn:hover {
+  color: var(--brand3);
+  background: var(--ui18);
+}
+
+.iade-nav-area-btn.active {
+  color: var(--brand3);
+  background: var(--ui18);
+}
+
+.iade-nav-area-btn.active::after {
+  background: var(--brand2);
+}
+
+.iade-new-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ui18);
+  color: var(--brand3);
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  letter-spacing: 0.04em;
+}
+
+.iade-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ==========================================================================
+   IADE Buttons (Mint Primary, Cobalt Blue Secondary, Black Editorial)
+   ========================================================================== */
+.iade-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 22px;
+  font-family: var(--font-primary);
+  font-size: 13.5px;
+  font-weight: 900;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.iade-btn:disabled {
+  background: #9eacaa !important;
+  color: #ededed !important;
+  border-color: #9eacaa !important;
+  cursor: not-allowed;
+}
+
+.iade-btn-mint {
+  background: var(--interactive01);
+  color: var(--brand1);
+  border-color: var(--interactive01);
+}
+
+.iade-btn-mint:hover:not(:disabled) {
+  background: var(--interactive01Hover);
+  border-color: var(--interactive01Hover);
+  transform: translateY(-1px);
+}
+
+.iade-btn-blue {
+  background: var(--brand3);
+  color: var(--brand5);
+  border-color: var(--brand3);
+}
+
+.iade-btn-blue:hover:not(:disabled) {
+  background: var(--interactive05Hover);
+  border-color: var(--interactive05Hover);
+  transform: translateY(-1px);
+}
+
+.iade-btn-outline {
+  background: var(--brand5);
+  color: var(--brand1);
+  border: 1.5px solid var(--brand1);
+}
+
+.iade-btn-outline:hover:not(:disabled) {
+  background: var(--interactive02Focus);
+  border-color: var(--brand2);
+}
+
+.iade-btn-sm {
+  padding: 7px 14px;
+  font-size: 11.5px;
+}
+
+/* ==========================================================================
+   IADE Hero Banner & Area Selector Cards
+   ========================================================================== */
+.iade-hero {
+  background: var(--brand3);
+  color: var(--brand5);
+  position: relative;
+  overflow: hidden;
+  border-bottom: 4px solid var(--brand2);
+}
+
+.iade-hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 42%;
+  background: var(--brand1);
+  clip-path: polygon(0 0, 100% 0, 82% 100%, 0% 100%);
+  pointer-events: none;
+}
+
+.iade-hero-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 32px 28px;
+}
+
+.iade-hero-top {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.iade-hero-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--brand2);
+  color: var(--brand1);
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 4px 12px;
+  margin-bottom: 10px;
+}
+
+.iade-hero-title {
+  font-size: clamp(24px, 3vw, 36px);
+  font-weight: 300;
+  line-height: 1.18;
+  color: var(--brand5);
+}
+
+.iade-hero-title strong {
+  font-weight: 900;
+  color: var(--brand2);
+}
+
+.iade-hero-subtitle {
+  margin-top: 8px;
+  font-size: 14.5px;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.88);
+  max-width: 680px;
+}
+
+/* Area Cards Grid inside Hero */
+.iade-area-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.iade-area-card {
+  background: var(--brand5);
+  color: var(--brand1);
+  border: 2px solid transparent;
+  padding: 18px 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 132px;
+}
+
+.iade-area-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
+}
+
+.iade-area-card.selected {
+  border-color: var(--brand2);
+  box-shadow: 0 0 0 3px rgba(60, 219, 192, 0.35), 0 12px 28px rgba(0, 0, 0, 0.22);
+}
+
+.iade-area-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.iade-area-faculty-tag {
+  font-size: 10.5px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--brand3);
+  background: var(--ui18);
+  padding: 3px 8px;
+}
+
+.iade-area-card.selected .iade-area-faculty-tag {
+  background: var(--brand2);
+  color: var(--brand1);
+}
+
+.iade-area-folder-code {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+.iade-area-card-title {
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--brand1);
+  margin-bottom: 4px;
+}
+
+.iade-area-card-title::after {
+  content: '';
+  display: block;
+  width: 42px;
+  height: 2px;
+  background: var(--brand1);
+  margin-top: 6px;
+  transition: width 0.25s ease, background 0.25s ease;
+}
+
+.iade-area-card.selected .iade-area-card-title::after,
+.iade-area-card:hover .iade-area-card-title::after {
+  width: 72px;
+  background: var(--brand3);
+}
+
+.iade-area-card-desc {
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  margin-top: 6px;
+}
+
+/* ==========================================================================
+   Main Workspace Grid
+   ========================================================================== */
+.iade-main {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 28px 28px 64px;
+}
+
+.iade-workspace-grid {
+  display: grid;
+  grid-template-columns: 7fr 5fr;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 1080px) {
+  .iade-workspace-grid {
+    grid-template-columns: 1fr;
+  }
+  .iade-hero::before {
+    width: 100%;
+    clip-path: none;
+    opacity: 0.35;
+  }
+}
+
+.iade-col {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+/* ==========================================================================
+   IADE Editorial Section Cards
+   ========================================================================== */
+.iade-card {
+  background: var(--brand5);
+  border: 1px solid var(--border-light);
+  padding: 24px;
+  position: relative;
+}
+
+.iade-card-accent-top {
+  border-top: 4px solid var(--brand1);
+}
+
+.iade-card-accent-blue {
+  border-top: 4px solid var(--brand3);
+}
+
+.iade-card-accent-mint {
+  border-top: 4px solid var(--brand2);
+}
+
+.iade-card-accent-magenta {
+  border-top: 4px solid var(--brand4);
+}
+
+.iade-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding-bottom: 16px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.iade-section-kicker {
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--brand3);
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.iade-section-title {
+  font-size: 21px;
+  font-weight: 900;
+  color: var(--brand1);
+  line-height: 1.25;
+}
+
+.iade-section-title::after {
+  content: '';
+  display: block;
+  width: 56px;
+  height: 2px;
+  background: var(--brand1);
+  margin-top: 8px;
+}
+
+.iade-api-badge {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--ui02);
+  color: var(--ui05);
+  border: 1px solid var(--border-light);
+  padding: 4px 10px;
+}
+
+/* Question Deck Tabs & Topic Bar */
+.iade-question-deck-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  background: var(--ui02);
+  padding: 12px 16px;
+  margin-bottom: 18px;
+  border-left: 4px solid var(--brand3);
+}
+
+.iade-question-tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.iade-q-tab {
+  background: var(--brand5);
+  border: 1px solid var(--border-light);
+  padding: 6px 14px;
+  font-family: var(--font-primary);
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--brand1);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.iade-q-tab:hover {
+  border-color: var(--brand3);
+  color: var(--brand3);
+}
+
+.iade-q-tab.active {
+  background: var(--brand1);
+  color: var(--brand2);
+  border-color: var(--brand1);
+}
+
+.iade-topic-generator-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.iade-input {
+  flex: 1;
+  min-width: 220px;
+  font-family: var(--font-primary);
+  font-size: 14px;
+  padding: 10px 14px;
+  border: 1px solid var(--border-light);
+  background: var(--brand5);
+  color: var(--brand1);
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.iade-input:focus {
+  border-color: var(--brand3);
+  box-shadow: 0 0 0 2px rgba(0, 71, 187, 0.15);
+}
+
+.iade-topic-chips {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.iade-topic-chip {
+  background: var(--ui18);
+  border: 1px solid rgba(0, 71, 187, 0.2);
+  color: var(--brand3);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.iade-topic-chip:hover,
+.iade-topic-chip.active {
+  background: var(--brand3);
+  color: var(--brand5);
+}
+
+/* Scenario & Prompt Boxes */
+.iade-scenario-box {
+  background: var(--ui02);
+  border-left: 4px solid var(--ui05);
+  padding: 16px 18px;
+  margin-bottom: 16px;
+}
+
+.iade-prompt-box {
+  background: var(--ui18);
+  border: 1px solid rgba(0, 71, 187, 0.25);
+  border-left: 4px solid var(--brand3);
+  padding: 18px 20px;
+  margin-bottom: 18px;
+}
+
+.iade-box-label {
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ui05);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.iade-prompt-box .iade-box-label {
+  color: var(--brand3);
+}
+
+.iade-points-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--brand1);
+  color: var(--brand2);
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  font-weight: 700;
+  padding: 5px 12px;
+}
+
+/* ==========================================================================
+   Scorecard & Rubric Styles
+   ========================================================================== */
+.iade-score-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 18px 20px;
+  background: var(--brand1);
+  color: var(--brand5);
+  margin-bottom: 18px;
+  border-left: 6px solid var(--brand2);
+}
+
+.iade-score-big {
+  font-size: 32px;
+  font-weight: 900;
+  color: var(--brand2);
+  font-family: var(--font-mono);
+}
+
+.iade-grade-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  font-weight: 900;
+  font-size: 13px;
+  text-transform: uppercase;
+  background: var(--brand2);
+  color: var(--brand1);
+}
+
+.iade-criterion-card {
+  border: 1px solid var(--border-light);
+  background: var(--brand5);
+  padding: 14px 16px;
+  margin-bottom: 12px;
+}
+
+.iade-criterion-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.iade-progress-track {
+  width: 100%;
+  height: 6px;
+  background: var(--ui02);
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.iade-progress-fill {
+  height: 100%;
+  background: var(--brand3);
+  transition: width 0.4s ease;
+}
+
+.iade-progress-fill.high {
+  background: var(--brand2);
+}
+
+/* ==========================================================================
+   Socratic Mentor Chat Styles
+   ========================================================================== */
+.iade-chat-log {
+  background: var(--ui02);
+  border: 1px solid var(--border-light);
+  padding: 16px;
+  max-height: 360px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.iade-chat-bubble {
+  padding: 12px 16px;
+  max-width: 92%;
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+
+.iade-chat-bubble.model {
+  align-self: flex-start;
+  background: var(--brand5);
+  border: 1px solid var(--border-light);
+  border-left: 4px solid var(--brand4);
+  color: var(--brand1);
+}
+
+.iade-chat-bubble.user {
+  align-self: flex-end;
+  background: var(--brand3);
+  color: var(--brand5);
+}
+
+.iade-chat-role {
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+  opacity: 0.75;
+}
+
+/* ==========================================================================
+   Markdown Preview & MarkdownBox Styles (Light IADE Editorial Theme)
    ========================================================================== */
 .md-preview {
-  font-family: var(--font-sans);
-  color: #E2E8F0;
-  font-size: 13.5px;
+  font-family: var(--font-primary);
+  color: var(--text-primary);
+  font-size: 14px;
   line-height: 1.65;
 }
 
 .md-preview-compact {
-  font-size: 13px;
+  font-size: 13.5px;
   line-height: 1.55;
 }
 
-.md-preview-compact .md-p:last-child {
-  margin-bottom: 0;
-}
-
 .md-heading {
-  color: #F8FAFC;
-  font-weight: 700;
+  color: var(--brand1);
+  font-weight: 900;
   margin-top: 10px;
   margin-bottom: 6px;
-  line-height: 1.35;
+  line-height: 1.3;
 }
 .md-heading:first-child {
   margin-top: 0;
 }
 .md-h1 {
-  font-size: 16px;
-  color: #93C5FD;
-  border-bottom: 1px solid rgba(66, 133, 244, 0.25);
+  font-size: 17px;
+  color: var(--brand3);
+  border-bottom: 1px solid var(--border-light);
   padding-bottom: 4px;
 }
 .md-h2 {
-  font-size: 14.5px;
-  color: #FDE047;
+  font-size: 15px;
+  color: var(--brand1);
 }
-.md-h3, .md-h4 {
-  font-size: 13.5px;
-  color: #86EFAC;
+.md-h3,
+.md-h4 {
+  font-size: 14px;
+  color: var(--ui05);
 }
 
 .md-p {
@@ -207,23 +923,22 @@ textarea:focus, input:focus, select:focus {
 }
 
 .md-strong {
-  color: #FFFFFF;
-  font-weight: 700;
+  color: var(--brand1);
+  font-weight: 900;
 }
 
 .md-em {
-  color: #CBD5E1;
+  color: var(--ui05);
   font-style: italic;
 }
 
 .md-inline-code {
   font-family: var(--font-mono);
   font-size: 12px;
-  background: rgba(66, 133, 244, 0.14);
-  border: 1px solid rgba(66, 133, 244, 0.3);
-  color: #93C5FD;
+  background: var(--ui18);
+  border: 1px solid rgba(0, 71, 187, 0.25);
+  color: var(--brand3);
   padding: 1px 6px;
-  border-radius: 5px;
 }
 
 .md-citation-badge {
@@ -231,70 +946,48 @@ textarea:focus, input:focus, select:focus {
   align-items: center;
   font-family: var(--font-mono);
   font-size: 11px;
-  font-weight: 600;
-  background: rgba(251, 188, 4, 0.14);
-  border: 1px solid rgba(251, 188, 4, 0.35);
-  color: #FDE047;
-  padding: 1px 7px;
-  border-radius: 999px;
+  font-weight: 700;
+  background: var(--interactive02Focus);
+  border: 1px solid var(--brand2);
+  color: var(--brand1);
+  padding: 1px 8px;
   margin: 0 2px;
 }
 
 .md-math-inline {
   font-family: 'Cambria Math', 'STIX Two Math', Georgia, serif;
   font-style: italic;
-  background: rgba(52, 168, 83, 0.12);
-  border: 1px solid rgba(52, 168, 83, 0.28);
-  color: #A7F3D0;
+  background: var(--interactive02Focus);
+  border: 1px solid var(--brand2);
+  color: var(--brand1);
   padding: 1px 6px;
-  border-radius: 5px;
-  font-size: 13px;
+  font-size: 13.5px;
 }
 
 .md-math-block-inline,
 .md-math-display {
   display: block;
   font-family: 'Cambria Math', 'STIX Two Math', Georgia, serif;
-  font-size: 14.5px;
-  background: #060A12;
-  border-left: 3px solid var(--g-green);
-  border-top: 1px solid rgba(52, 168, 83, 0.2);
-  border-right: 1px solid rgba(52, 168, 83, 0.2);
-  border-bottom: 1px solid rgba(52, 168, 83, 0.2);
-  color: #A7F3D0;
-  padding: 8px 14px;
+  font-size: 15px;
+  background: var(--brand5);
+  border-left: 4px solid var(--brand2);
+  border-top: 1px solid var(--border-light);
+  border-right: 1px solid var(--border-light);
+  border-bottom: 1px solid var(--border-light);
+  color: var(--brand1);
+  padding: 10px 14px;
   margin: 8px 0;
-  border-radius: 6px;
   text-align: center;
-  letter-spacing: 0.3px;
-}
-
-.md-math-text {
-  font-family: var(--font-sans);
-  font-style: normal;
-  color: #E2E8F0;
-}
-
-.md-frac {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-}
-.md-frac-num {
-  font-weight: 600;
-}
-.md-frac-bar {
-  color: var(--text-muted);
 }
 
 .md-list {
-  margin: 6px 0 10px 18px;
+  margin: 6px 0 10px 20px;
   display: flex;
   flex-direction: column;
   gap: 5px;
 }
 .md-li {
-  color: #E2E8F0;
+  color: var(--text-primary);
 }
 .md-sublist {
   margin: 4px 0 4px 18px;
@@ -303,55 +996,42 @@ textarea:focus, input:focus, select:focus {
   gap: 3px;
   list-style-type: circle;
 }
-.md-subli {
-  color: #CBD5E1;
-  font-size: 13px;
-}
 
 .md-blockquote {
-  border-left: 3px solid var(--g-blue);
-  background: rgba(66, 133, 244, 0.08);
-  padding: 8px 12px;
-  border-radius: 0 6px 6px 0;
-  color: #CBD5E1;
+  border-left: 4px solid var(--brand3);
+  background: var(--ui18);
+  padding: 10px 14px;
+  color: var(--ui05);
   margin: 8px 0;
 }
 
 .md-code-block {
-  background: #050811;
-  border: 1px solid var(--border);
-  border-radius: 8px;
+  background: #14191f;
+  border: 1px solid var(--brand1);
   overflow: hidden;
   margin: 8px 0;
 }
 .md-code-lang {
-  background: #0F172A;
-  color: var(--text-muted);
+  background: var(--brand1);
+  color: var(--brand2);
   font-family: var(--font-mono);
   font-size: 10.5px;
+  font-weight: 700;
   text-transform: uppercase;
-  padding: 4px 10px;
-  border-bottom: 1px solid var(--border);
+  padding: 4px 12px;
 }
 .md-code-block pre {
-  padding: 10px 12px;
-  font-size: 12px;
-  color: #93C5FD;
+  padding: 12px 14px;
+  font-size: 12.5px;
+  color: #f8fafc;
   overflow-x: auto;
   white-space: pre-wrap;
 }
 
-.md-hr {
-  border: none;
-  border-top: 1px solid var(--border);
-  margin: 10px 0;
-}
-
 /* MarkdownBox (Preview + Edit + Split container) */
 .md-box-wrapper {
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: #070B14;
+  border: 1.5px solid var(--brand1);
+  background: var(--brand5);
   overflow: hidden;
   margin-bottom: 14px;
 }
@@ -362,22 +1042,23 @@ textarea:focus, input:focus, select:focus {
   align-items: center;
   flex-wrap: wrap;
   gap: 8px;
-  padding: 8px 12px;
-  background: #0D1424;
-  border-bottom: 1px solid var(--border);
+  padding: 8px 14px;
+  background: var(--ui02);
+  border-bottom: 1px solid var(--border-light);
 }
 
 .md-box-label {
-  font-size: 12.5px;
-  font-weight: 700;
-  color: #F1F5F9;
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--brand1);
 }
 
 .md-mode-tabs {
   display: inline-flex;
-  background: #070B14;
-  border: 1px solid var(--border);
-  border-radius: 6px;
+  background: var(--brand5);
+  border: 1px solid var(--border-light);
   padding: 2px;
   gap: 2px;
 }
@@ -387,23 +1068,22 @@ textarea:focus, input:focus, select:focus {
   align-items: center;
   gap: 5px;
   background: transparent;
-  color: var(--text-muted);
+  color: var(--ui05);
   border: none;
-  padding: 4px 9px;
+  padding: 4px 10px;
   font-size: 11.5px;
-  font-weight: 600;
-  border-radius: 4px;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
 .md-mode-btn:hover {
-  color: #F8FAFC;
+  color: var(--brand3);
 }
 
 .md-mode-btn.active {
-  background: rgba(66, 133, 244, 0.2);
-  color: #93C5FD;
+  background: var(--brand1);
+  color: var(--brand2);
 }
 
 .md-box-body {
@@ -413,7 +1093,6 @@ textarea:focus, input:focus, select:focus {
 .md-box-body.md-box-split {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  border-top: none;
 }
 
 @media (max-width: 800px) {
@@ -425,23 +1104,42 @@ textarea:focus, input:focus, select:focus {
 .md-box-textarea {
   width: 100%;
   border: none !important;
-  border-radius: 0 !important;
-  background: #050811 !important;
-  color: #F8FAFC;
+  background: #fafafa !important;
+  color: var(--brand1);
   font-family: var(--font-mono) !important;
   font-size: 13px !important;
-  line-height: 1.55;
+  line-height: 1.6;
   padding: 14px;
   resize: vertical;
-  box-shadow: none !important;
+  outline: none;
 }
 
 .md-box-split .md-box-textarea {
-  border-right: 1px solid var(--border) !important;
+  border-right: 1px solid var(--border-light) !important;
 }
 
 .md-box-preview-surface {
   padding: 14px 16px;
-  min-height: 120px;
-  background: #070B14;
+  min-height: 130px;
+  background: var(--brand5);
+}
+
+/* Footer */
+.iade-footer {
+  background: var(--brand1);
+  color: var(--brand5);
+  border-top: 4px solid var(--brand2);
+  padding: 28px;
+  margin-top: 48px;
+}
+
+.iade-footer-inner {
+  max-width: 1440px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 13px;
 }

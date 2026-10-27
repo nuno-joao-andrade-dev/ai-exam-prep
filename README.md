@@ -25,8 +25,8 @@ examprep/
 ├── step-02-rag/                  # Step 2: ADK FunctionTool over data/[area]/
 ├── step-03-exam-gen/             # Step 3: Structured JSON exam + rubric generator
 ├── step-04-socratic-agent/       # Step 4: Multi-turn Socratic Study Mentor agent
-├── step-05-grading-complete/     # Step 5: Deterministic grader + API server
-└── question-interface/           # React + Vite Web UI with Markdown Preview boxes
+├── step-05-grading-complete/     # Step 5: Deterministic grader + Express API + OpenAPI/Swagger
+└── step-06-web-ui/               # Step 6 (Optional): IADE-inspired React Student Web UI (:5173)
 ```
 
 ---
@@ -84,6 +84,7 @@ cd ../step-03-exam-gen && npm start javascript
 cd ../step-04-socratic-agent && npm start javascript
 cd ../step-04-socratic-agent && npm run web     # Launch ADK DevTools Web UI (http://localhost:8000)
 cd ../step-05-grading-complete && npm start javascript
+cd ../step-06-web-ui && npm start javascript    # Optional Step 6: IADE React Student UI + Step 5 API
 ```
 
 ### Option B: From Root `package.json` Scripts
@@ -94,6 +95,7 @@ npm run step03 -- cloud "Horizontal Scaling and Caching"
 npm run step04 -- javascript
 npm run step04:web                              # Launch ADK DevTools Web UI (http://localhost:8000)
 npm run step05 -- javascript
+npm run step06 -- javascript                    # Optional Step 6: Starts Step 5 API (:3000) + IADE React UI (:5173)
 npm run test:all -- javascript
 ```
 
@@ -106,9 +108,10 @@ npm run test:all -- javascript
 npm run dev
 
 # Or run each service individually:
-npm run server     # Express API backend (http://localhost:3000)
+npm run server     # Express API backend + OpenAPI/Swagger UI (http://localhost:3000)
 npm run ui         # React Vite dev server (http://localhost:5173)
 npm run slides     # Slide Deck (http://localhost:3030)
 ```
 
-Pass the area parameter via URL (`http://localhost:5173/?area=javascript`, `?area=ai-agents`, `?area=cloud`), select it in the top header dropdown, or click **"+ Pass Custom Content Parameter"** to pass raw Markdown directly as a parameter.
+- **OpenAPI / Swagger UI (Root)**: Visit `http://localhost:3000/` for interactive Swagger UI documentation (or `http://localhost:3000/openapi.json` / `http://localhost:3000/?format=json` for the raw OpenAPI 3.0.3 JSON spec).
+- **Area Parameter**: Pass the area parameter via URL (`http://localhost:5173/?area=javascript`, `?area=ai-agents`, `?area=cloud`), select it in the top header dropdown, or click **"+ Pass Custom Content Parameter"** to pass raw Markdown directly as a parameter.

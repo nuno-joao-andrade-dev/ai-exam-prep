@@ -2,81 +2,203 @@ import React from 'react';
 import { MarkdownPreview } from './MarkdownPreview';
 
 export function RubricScorecardView({ rubric = [], evaluation, isGrading }) {
+  const awarded =
+    evaluation?.totalAwarded ?? evaluation?.totalScore ?? 0;
+  const possible =
+    evaluation?.totalPossible ?? evaluation?.maxPossibleScore ?? 100;
+  const pct =
+    evaluation?.percentage ??
+    (possible > 0 ? Math.round((awarded / possible) * 100) : 0);
+
   return (
-    <div className="rounded-2xl border border-slate-800/90 bg-slate-900/60 p-5 shadow-xl">
-      <div className="mb-3 flex items-center justify-between border-b border-slate-800/80 pb-3">
+    <section className="iade-card iade-card-accent-mint">
+      <div className="iade-card-header">
         <div>
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-emerald-400">
-            Step 05 • Deterministic Rubric & Grader
-          </span>
-          <h3 className="text-sm font-bold text-white">
-            Rubric Breakdown & Structured Evaluation
-          </h3>
-        </div>
-        {evaluation && (
-          <div className="flex items-center gap-2">
-            <span className="rounded-lg bg-emerald-500/20 px-2.5 py-1 font-mono text-xs font-bold text-emerald-300">
-              {evaluation.totalAwarded} / {evaluation.totalPossible} pts (
-              {evaluation.percentage}%)
-            </span>
-            <span className="rounded-lg border border-sky-500/40 bg-sky-500/15 px-2.5 py-1 font-mono text-xs font-bold text-sky-300">
-              {evaluation.letterGrade}
-            </span>
+          <div className="iade-section-kicker">
+            <span>Step 05 • Deterministic Rubric &amp; Grader</span>
           </div>
-        )}
+          <h2 className="iade-section-title">
+            Rubric Breakdown &amp; AI Evaluation
+          </h2>
+        </div>
+        <span className="iade-api-badge">POST /api/grade/evaluate</span>
       </div>
 
       {isGrading && (
-        <div className="mb-4 rounded-xl border border-emerald-500/30 bg-emerald-950/20 p-4 text-xs text-emerald-200">
-          Grading submission with local Gemma 4 using structured JSON schema...
+        <div
+          style={{
+            padding: '16px',
+            marginBottom: '16px',
+            background: 'var(--interactive02Focus)',
+            borderLeft: '4px solid var(--brand2)',
+            fontSize: '13.5px',
+            fontWeight: 700,
+          }}
+        >
+          Grading student answer against rubric criteria with local Gemma 4...
         </div>
       )}
 
-      {/* Rubric Criteria Previews */}
-      <div className="space-y-3">
+      {/* Overall Score Banner when Evaluation is Ready */}
+      {evaluation && (
+        <div className="iade-score-banner">
+          <div>
+            <div
+              style={{
+                fontSize: '11px',
+                fontWeight: 900,
+                textTransform: 'uppercase',
+                letterSpacing: '0.1em',
+                color: 'var(--brand2)',
+                marginBottom: '4px',
+              }}
+            >
+              Step 05 Official Scorecard
+            </div>
+            <div className="iade-score-big">
+              {awarded} / {possible} PTS ({pct}%)
+            </div>
+          </div>
+          <div className="iade-grade-pill">
+            Grade: {evaluation.letterGrade || 'A'}
+          </div>
+        </div>
+      )}
+
+      {/* Rubric Criteria List */}
+      <div>
         {rubric.map((item) => {
           const scoreItem = evaluation?.criterionScores?.find(
             (c) => c.criterionId === item.id
           );
+          const itemAwarded = scoreItem?.awardedPoints ?? 0;
+          const itemMax = scoreItem?.maxPoints ?? item.maxPoints ?? 50;
+          const ratio = itemMax > 0 ? (itemAwarded / itemMax) * 100 : 0;
+
           return (
-            <div
-              key={item.id}
-              className="rounded-xl border border-slate-800 bg-slate-950/60 p-3.5"
-            >
-              <div className="mb-2 flex items-center justify-between">
-                <span className="text-xs font-bold text-white">
-                  <code className="mr-1.5 text-sky-400">[{item.id}]</code>
+            <div key={item.id} className="iade-criterion-card">
+              <div className="iade-criterion-top">
+                <div style={{ fontWeight: 900, fontSize: '14px' }}>
+                  <code
+                    style={{
+                      background: 'var(--ui18)',
+                      color: 'var(--brand3)',
+                      padding: '2px 6px',
+                      marginRight: '8px',
+                      fontSize: '12px',
+                    }}
+                  >
+                    [{item.id}]
+                  </code>
                   {item.criterion}
-                </span>
-                <span className="font-mono text-xs font-semibold text-emerald-300">
+                </div>
+                <span className="iade-points-badge">
                   {scoreItem
-                    ? `${scoreItem.awardedPoints} / ${scoreItem.maxPoints} pts`
-                    : `${item.maxPoints} pts`}
+                    ? `${itemAwarded} / ${itemMax} PTS`
+                    : `${item.maxPoints} PTS`}
                 </span>
               </div>
 
-              <div className="grid grid-cols-1 gap-2 text-[11px] md:grid-cols-2">
-                <div className="rounded-lg border border-emerald-500/20 bg-emerald-950/10 p-2.5">
-                  <div className="mb-1 font-semibold text-emerald-400">Full Marks</div>
+              {scoreItem && (
+                <div className="iade-progress-track">
+                  <div
+                    className={`iade-progress-fill ${ratio >= 75 ? 'high' : ''}`}
+                    style={{ width: `${Math.min(100, Math.max(0, ratio))}%` }}
+                  />
+                </div>
+              )}
+
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+                  gap: '10px',
+                  marginTop: '10px',
+                }}
+              >
+                <div
+                  style={{
+                    background: 'var(--ui02)',
+                    padding: '10px 12px',
+                    borderLeft: '3px solid var(--brand2)',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '11px',
+                      fontWeight: 900,
+                      textTransform: 'uppercase',
+                      marginBottom: '4px',
+                      color: 'var(--ui05)',
+                    }}
+                  >
+                    Full Marks Target
+                  </div>
                   <MarkdownPreview content={item.fullMarksDescription} />
                 </div>
-                <div className="rounded-lg border border-amber-500/20 bg-amber-950/10 p-2.5">
-                  <div className="mb-1 font-semibold text-amber-400">Partial Marks</div>
+                <div
+                  style={{
+                    background: 'var(--ui02)',
+                    padding: '10px 12px',
+                    borderLeft: '3px solid var(--brand3)',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '11px',
+                      fontWeight: 900,
+                      textTransform: 'uppercase',
+                      marginBottom: '4px',
+                      color: 'var(--brand3)',
+                    }}
+                  >
+                    Partial Marks
+                  </div>
                   <MarkdownPreview content={item.partialMarksDescription} />
                 </div>
               </div>
 
               {scoreItem && (
-                <div className="mt-2.5 space-y-1.5 border-t border-slate-800/80 pt-2.5">
-                  <div className="text-[11px] font-semibold text-sky-300">
-                    Grader Justification (Markdown Preview):
+                <div
+                  style={{
+                    marginTop: '12px',
+                    paddingTop: '12px',
+                    borderTop: '1px solid var(--border-light)',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '11.5px',
+                      fontWeight: 900,
+                      textTransform: 'uppercase',
+                      color: 'var(--brand3)',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    Grader Justification:
                   </div>
-                  <MarkdownPreview content={scoreItem.justification} />
+                  <MarkdownPreview
+                    content={scoreItem.justification || scoreItem.feedback}
+                  />
                   {scoreItem.improvementTip && (
-                    <div className="rounded-lg border border-indigo-500/20 bg-indigo-950/20 p-2">
-                      <span className="text-[10px] font-bold uppercase text-indigo-300">
+                    <div
+                      style={{
+                        marginTop: '8px',
+                        padding: '10px 12px',
+                        background: 'var(--interactive02Focus)',
+                        borderLeft: '3px solid var(--brand2)',
+                      }}
+                    >
+                      <strong
+                        style={{
+                          fontSize: '11px',
+                          textTransform: 'uppercase',
+                          display: 'block',
+                          marginBottom: '2px',
+                        }}
+                      >
                         Improvement Tip:
-                      </span>
+                      </strong>
                       <MarkdownPreview content={scoreItem.improvementTip} />
                     </div>
                   )}
@@ -88,13 +210,28 @@ export function RubricScorecardView({ rubric = [], evaluation, isGrading }) {
       </div>
 
       {evaluation?.overallFeedback && (
-        <div className="mt-4 rounded-xl border border-sky-500/30 bg-sky-950/20 p-3.5">
-          <div className="mb-1 text-xs font-bold text-sky-300">
-            Overall Feedback (Markdown Preview)
+        <div
+          style={{
+            marginTop: '16px',
+            padding: '16px 18px',
+            background: 'var(--ui18)',
+            borderLeft: '4px solid var(--brand3)',
+          }}
+        >
+          <div
+            style={{
+              fontSize: '12px',
+              fontWeight: 900,
+              textTransform: 'uppercase',
+              color: 'var(--brand3)',
+              marginBottom: '6px',
+            }}
+          >
+            Overall Instructor Feedback
           </div>
           <MarkdownPreview content={evaluation.overallFeedback} />
         </div>
       )}
-    </div>
+    </section>
   );
 }

@@ -1,5 +1,54 @@
 import React from 'react';
 import { MarkdownBox } from './MarkdownPreview';
+import { getAreaDefault } from '../sampleData';
+
+export function IadeLogoSvg() {
+  return (
+    <svg
+      className="iade-logo-svg"
+      width="220"
+      height="42"
+      viewBox="0 0 354 68"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-label="IADE Faculdade de Design, Tecnologia e Comunicação"
+    >
+      <path d="M131.73 22.5555L122.946 35.2592H131.73V22.5555Z" fill="black" />
+      <path
+        d="M138.36 17.2222V50.8148C147.439 49.4259 154.363 42.463 154.363 34.037C154.363 25.6111 147.439 18.6111 138.36 17.2222Z"
+        fill="black"
+      />
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M0 68V0H233L186.15 68H0ZM180.367 10.9074V17.6667H167.034V30.3518H175.91V37H167.034V50.2778H180.404V56.9259H160.404V39.2407C157.826 49.8333 147.421 57.7778 135.063 57.7778H131.748V41.9815H118.342L108.01 56.8889H102.743V14.5L109.355 10.9629V43.2407L127.181 17.4629C125.248 17.7407 123.535 18.0741 122.08 18.5185L118.912 19.4629L117.016 13.0741L120.183 12.1296C124.069 10.9815 129.465 10.2963 135.045 10.2963C147.421 10.2963 157.789 18.2407 160.385 28.8333V10.9074H180.367Z"
+        fill="black"
+      />
+      <text
+        x="232"
+        y="29"
+        fill="#000000"
+        fontFamily="Lato, sans-serif"
+        fontWeight="900"
+        fontSize="18"
+        letterSpacing="1.5"
+      >
+        CREATIVE
+      </text>
+      <text
+        x="232"
+        y="52"
+        fill="#000000"
+        fontFamily="Lato, sans-serif"
+        fontWeight="400"
+        fontSize="16.5"
+        letterSpacing="1.2"
+      >
+        UNIVERSITY
+      </text>
+    </svg>
+  );
+}
 
 export function Header({
   status,
@@ -11,112 +60,171 @@ export function Header({
   showCustomParamBox,
   onToggleCustomParamBox,
 }) {
+  const areaList = areas?.length ? areas : ['javascript', 'ai-agents', 'cloud'];
+
   return (
-    <header className="border-b border-slate-800/80 bg-slate-950/90 backdrop-blur-md">
-      <div className="mx-auto flex max-w-[1600px] flex-wrap items-center justify-between gap-4 px-6 py-3.5">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-sky-500 to-indigo-600 font-bold text-white shadow-lg shadow-sky-500/20">
-            G4
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="rounded bg-sky-500/15 px-2 py-0.5 font-mono text-[11px] font-semibold text-sky-400">
-                data/{area}/
+    <div className="iade-navbar-wrapper">
+      {/* Top IADE Utility Strip */}
+      <div className="iade-utility-bar">
+        <div className="iade-utility-inner">
+          <ul className="iade-utility-links">
+            <li>
+              <a
+                href="https://www.iade.europeia.pt/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                IADE • Faculdade de Design, Tecnologia e Comunicação
+              </a>
+            </li>
+            <li>
+              <a href="http://localhost:3000/" target="_blank" rel="noreferrer">
+                Step 05 OpenAPI / Swagger (:3000)
+              </a>
+            </li>
+            <li>
+              <a href="http://localhost:3030/" target="_blank" rel="noreferrer">
+                Workshop Slides (:3030)
+              </a>
+            </li>
+          </ul>
+
+          <div className="iade-utility-right">
+            <div className="iade-status-pill" title="Step 05 Express API + Local Ollama">
+              <span
+                className={`iade-status-dot ${
+                  status?.ollamaReachable ? 'online' : 'offline'
+                }`}
+              />
+              <span>
+                {status?.ollamaReachable
+                  ? 'Step 05 API + Ollama Online'
+                  : 'Step 05 API Connected (Ollama Check)'}
               </span>
-              <h1 className="text-base font-bold tracking-tight text-white">
-                AI Exam Prep — Google ADK + Local Gemma 4
-              </h1>
+              <code
+                style={{
+                  background: 'var(--ui18)',
+                  color: 'var(--brand3)',
+                  padding: '1px 6px',
+                  fontSize: '11px',
+                }}
+              >
+                {status?.configuredModel || 'gemma4:e2b'}
+              </code>
             </div>
-            <p className="text-xs text-slate-400">
-              Simple JavaScript Agents • Area parameter:{' '}
-              <code className="text-sky-300">?area={area}</code>
-            </p>
-          </div>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-2 rounded-lg border border-slate-800 bg-slate-900/90 px-3 py-1.5 text-xs">
-            <label htmlFor="area-select" className="font-semibold text-slate-400">
-              Area Parameter:
-            </label>
-            <select
-              id="area-select"
-              value={area}
-              onChange={(e) => onSelectArea(e.target.value)}
-              className="rounded border border-slate-700 bg-slate-950 px-2.5 py-1 font-mono text-xs text-sky-300 focus:border-sky-500 focus:outline-none"
-            >
-              {(areas.length ? areas : ['javascript', 'ai-agents', 'cloud']).map((a) => (
-                <option key={a} value={a}>
-                  data/{a}/
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <button
-            type="button"
-            onClick={onToggleCustomParamBox}
-            className={`rounded-lg border px-3 py-1.5 text-xs font-semibold transition ${
-              customContent?.trim()
-                ? 'border-amber-500/50 bg-amber-500/15 text-amber-300'
-                : 'border-slate-800 bg-slate-900/80 text-slate-300 hover:border-slate-700'
-            }`}
-          >
-            {customContent?.trim()
-              ? 'Custom Content Parameter (Active)'
-              : showCustomParamBox
-                ? 'Hide Content Parameter'
-                : '+ Pass Custom Content Parameter'}
-          </button>
-
-          <div className="flex items-center gap-2 rounded-full border border-slate-800 bg-slate-900/80 px-3.5 py-1.5 text-xs">
-            <span
-              className={`h-2.5 w-2.5 rounded-full ${
-                status?.ollamaReachable
-                  ? 'bg-emerald-400 shadow-[0_0_8px_#34d399]'
-                  : 'bg-amber-400'
-              }`}
-            />
-            <span className="font-medium text-slate-300">
-              {status?.ollamaReachable ? 'Ollama Connected' : 'Checking Ollama...'}
-            </span>
-            <code className="rounded bg-slate-800 px-1.5 py-0.5 font-mono text-[11px] text-sky-300">
-              {status?.configuredModel || 'gemma4:e2b'}
-            </code>
           </div>
         </div>
       </div>
 
+      {/* Main IADE Navigation Bar */}
+      <nav className="iade-main-nav">
+        <div className="iade-brand-group">
+          <a
+            href="https://www.iade.europeia.pt/"
+            target="_blank"
+            rel="noreferrer"
+            title="IADE Creative University"
+          >
+            <IadeLogoSvg />
+          </a>
+          <div className="iade-brand-divider" />
+          <div className="iade-portal-badge">
+            <span className="iade-portal-kicker">Step 06 (Optional) • Student Portal</span>
+            <span className="iade-portal-title">
+              AI Exam Prep &amp; Socratic Assessment
+            </span>
+          </div>
+        </div>
+
+        {/* Area Navigation Links (Inspired by IADE Licenciaturas Menu) */}
+        <div className="iade-nav-areas" role="tablist" aria-label="Study Areas">
+          {areaList.map((a) => {
+            const isSelected = a === area;
+            return (
+              <button
+                key={a}
+                type="button"
+                role="tab"
+                aria-selected={isSelected}
+                onClick={() => onSelectArea(a)}
+                className={`iade-nav-area-btn ${isSelected ? 'active' : ''}`}
+              >
+                <span>{a.toUpperCase()}</span>
+                <span className="iade-new-tag">data/{a}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="iade-nav-actions">
+          <button
+            type="button"
+            onClick={onToggleCustomParamBox}
+            className={`iade-btn iade-btn-sm ${
+              customContent?.trim() ? 'iade-btn-mint' : 'iade-btn-outline'
+            }`}
+          >
+            {customContent?.trim()
+              ? 'Custom Notes Active'
+              : showCustomParamBox
+                ? 'Close Custom Notes'
+                : '+ Custom Notes Parameter'}
+          </button>
+        </div>
+      </nav>
+
+      {/* Collapsible Custom Markdown Parameter Box */}
       {showCustomParamBox && (
-        <div className="mx-auto max-w-[1600px] px-6 pb-4">
-          <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-3">
-            <div className="mb-2 flex items-center justify-between">
-              <span className="text-xs text-slate-300">
-                Optional <code className="text-sky-300">customContent</code> parameter (passed directly to RAG, Exam Generator, Socratic Mentor & Grader):
+        <div
+          style={{
+            maxWidth: '1440px',
+            margin: '0 auto',
+            padding: '0 28px 18px',
+          }}
+        >
+          <div
+            style={{
+              background: 'var(--ui02)',
+              border: '1px solid var(--border-light)',
+              borderLeft: '4px solid var(--brand4)',
+              padding: '14px 18px',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '8px',
+                fontSize: '12.5px',
+              }}
+            >
+              <span>
+                <strong>Optional <code>customContent</code> Parameter:</strong> Paste custom study notes below to override <code>data/{area}/</code> across Step 05 API calls:
               </span>
               {customContent?.trim() && (
                 <button
                   type="button"
                   onClick={() => onChangeCustomContent('')}
-                  className="text-xs text-rose-400 hover:underline"
+                  className="iade-btn iade-btn-outline iade-btn-sm"
                 >
-                  Clear custom content (use data/{area}/ files)
+                  Reset to data/{area}/
                 </button>
               )}
             </div>
             <MarkdownBox
-              label="Custom Markdown Content Parameter"
+              label="Custom Study Notes (Markdown)"
               badge="customContent"
               value={customContent}
               onChange={onChangeCustomContent}
               defaultMode="split"
               rows={4}
               minHeight="80px"
-              placeholder={`# Custom Study Notes\n\nPaste Markdown here to override data/${area}/ files, or leave empty to load files from data/${area}/...`}
+              placeholder={`# Custom Notes for ${getAreaDefault(area).label}\n\nPaste Markdown notes here to generate exam questions and grade answers from your own text...`}
             />
           </div>
         </div>
       )}
-    </header>
+    </div>
   );
 }

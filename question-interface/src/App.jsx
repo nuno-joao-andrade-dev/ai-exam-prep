@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Header } from './components/Header';
+import { AreaSelectorHero } from './components/AreaSelectorHero';
 import { ExamQuestionView } from './components/ExamQuestionView';
 import { RubricScorecardView } from './components/RubricScorecardView';
 import { SocraticChatView } from './components/SocraticChatView';
@@ -28,7 +29,10 @@ export function App() {
 
   const [status, setStatus] = useState(null);
   const [topic, setTopic] = useState(areaDefault.defaultTopic);
-  const [exam, setExam] = useState(areaDefault.exam);
+  const [questionDeck, setQuestionDeck] = useState(
+    areaDefault.questionDeck || [areaDefault.exam]
+  );
+  const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
   const [studentAnswer, setStudentAnswer] = useState(areaDefault.sampleAnswer);
   const [evaluation, setEvaluation] = useState(null);
 
@@ -39,7 +43,7 @@ export function App() {
   const [messages, setMessages] = useState([
     {
       role: 'model',
-      text: `Hello! I am your **Socratic Study Mentor** for \`data/${area}/\`. Ask me for a hint on the exam question or any concept in \`data/${area}/\`, and I will guide you step-by-step without spoiling the answer.`,
+      text: `Welcome to the **IADE AI Exam Prep Portal (Step 06)** for \`data/${area}/\`! Select a question or generate a new one via the **Step 05 API**, write your answer, or ask me for a Socratic hint.`,
     },
   ]);
   const [isSendingChat, setIsSendingChat] = useState(false);
@@ -48,7 +52,10 @@ export function App() {
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
 
-  // Sync area parameter to URL (?area=...) and load defaults when area changes
+  const currentExam =
+    questionDeck[activeQuestionIndex] || questionDeck[0] || areaDefault.exam;
+
+  // Switch active study area (`data/[area]`) and load its questions
   const handleSelectArea = (nextArea) => {
     setArea(nextArea);
     const url = new URL(window.location.href);
@@ -56,17 +63,24 @@ export function App() {
     window.history.replaceState({}, '', url.toString());
 
     const nextDefault = getAreaDefault(nextArea);
+    const nextDeck = nextDefault.questionDeck || [nextDefault.exam];
     setTopic(nextDefault.defaultTopic);
-    setExam(nextDefault.exam);
+    setQuestionDeck(nextDeck);
+    setActiveQuestionIndex(0);
     setStudentAnswer(nextDefault.sampleAnswer);
     setEvaluation(null);
     setSearchQuery(nextDefault.defaultSearchQuery);
     setMessages([
       {
         role: 'model',
-        text: `Switched area parameter to \`data/${nextArea}/\`. Ask me for a hint on **${nextDefault.exam.examTitle}**!`,
+        text: `Switched study area to **${nextDefault.label}** (\`data/${nextArea}/\`). **${nextDeck.length} questions** are ready in your deck, or click **Generate Question via API** to synthesize a fresh one with Gemma 4!`,
       },
     ]);
+  };
+
+  const handleSelectQuestionIndex = (idx) => {
+    setActiveQuestionIndex(idx);
+    setEvaluation(null);
   };
 
   useEffect(() => {
@@ -103,7 +117,8 @@ export function App() {
     loadStatusAndSearch();
   }, [area, customContent]);
 
-  const handleGenerateExam = async () => {
+  const handleGenerateExam = async (customTopic) => {
+    const targetTopic = typeof customTopic === 'string' && customTopic.trim() ? customTopic : topic;
     setIsGenerating(true);
     setEvaluation(null);
     try {
@@ -112,13 +127,24 @@ export function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           area,
-          topic,
+          topic: targetTopic,
           customContent: customContent || undefined,
         }),
       });
       const data = await res.json();
       if (data.exam) {
-        setExam(data.exam);
+        setQuestionDeck((prev) => {
+          const updated = [
+            ...prev,
+            {
+              ...data.exam,
+              area,
+              questionNumber: prev.length + 1,
+            },
+          ];
+          setActiveQuestionIndex(updated.length - 1);
+          return updated;
+        });
       }
     } catch (err) {
       console.error('Exam generation error:', err);
@@ -135,7 +161,7 @@ export function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           area,
-          exam,
+          exam: currentExam,
           studentAnswer,
           customContent: customContent || undefined,
         }),
@@ -162,7 +188,7 @@ export function App() {
           sessionId,
           area,
           message: userMessage,
-          questionContext: `${exam.examTitle}: ${exam.questionPrompt}`,
+          questionContext: `${currentExam.examTitle}: ${currentExam.questionPrompt}`,
           customContent: customContent || undefined,
         }),
       });
@@ -177,7 +203,10 @@ export function App() {
     } catch (err) {
       setMessages((prev) => [
         ...prev,
-        { role: 'model', text: `Error contacting Socratic Mentor: ${String(err)}` },
+        {
+          role: 'model',
+          text: `Error contacting Step 05 API Socratic Mentor: ${String(err)}`,
+        },
       ]);
     } finally {
       setIsSendingChat(false);
@@ -209,7 +238,7 @@ export function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
+    <div>
       <Header
         status={status}
         area={area}
@@ -221,13 +250,25 @@ export function App() {
         onToggleCustomParamBox={() => setShowCustomParamBox((v) => !v)}
       />
 
-      <main className="mx-auto max-w-[1600px] px-6 py-6">
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-          {/* Left Column: Exam Generator, Question Markdown Preview & Student Answer + Rubric */}
-          <div className="space-y-6 lg:col-span-7">
+      <AreaSelectorHero
+        area={area}
+        areas={areas}
+        onSelectArea={handleSelectArea}
+        onGenerateExam={handleGenerateExam}
+        isGenerating={isGenerating}
+        questionCount={questionDeck.length}
+      />
+
+      <main className="iade-main">
+        <div className="iade-workspace-grid">
+          {/* Left Column: Area Questions, Student Answer Submission & Step 05 Rubric Scorecard */}
+          <div className="iade-col">
             <ExamQuestionView
               area={area}
-              exam={exam}
+              exam={currentExam}
+              questionDeck={questionDeck}
+              activeQuestionIndex={activeQuestionIndex}
+              onSelectQuestionIndex={handleSelectQuestionIndex}
               topic={topic}
               onChangeTopic={setTopic}
               onGenerateExam={handleGenerateExam}
@@ -242,14 +283,14 @@ export function App() {
             />
 
             <RubricScorecardView
-              rubric={exam.rubric}
+              rubric={currentExam.rubric}
               evaluation={evaluation}
               isGrading={isGrading}
             />
           </div>
 
-          {/* Right Column: Socratic Mentor Chat + Area RAG Search */}
-          <div className="space-y-6 lg:col-span-5">
+          {/* Right Column: Step 04 Socratic Study Coach + Step 02 Area RAG Explorer */}
+          <div className="iade-col">
             <SocraticChatView
               area={area}
               messages={messages}
@@ -260,7 +301,7 @@ export function App() {
                 setMessages([
                   {
                     role: 'model',
-                    text: `Session reset! Ask me for a hint about \`data/${area}/\`.`,
+                    text: `Session reset! Ask me for a Socratic hint on **${currentExam.examTitle}** (\`data/${area}/\`).`,
                   },
                 ]);
               }}
@@ -278,6 +319,38 @@ export function App() {
           </div>
         </div>
       </main>
+
+      <footer className="iade-footer">
+        <div className="iade-footer-inner">
+          <div>
+            <strong>IADE • Faculdade de Design, Tecnologia e Comunicação</strong> — Step 06 (Optional) React Student Web Interface
+          </div>
+          <div style={{ display: 'flex', gap: '18px', flexWrap: 'wrap' }}>
+            <a
+              href="http://localhost:3000/"
+              target="_blank"
+              rel="noreferrer"
+              style={{ color: 'var(--brand2)', fontWeight: 700 }}
+            >
+              Step 05 OpenAPI / Swagger (:3000)
+            </a>
+            <a
+              href="https://www.iade.europeia.pt/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              iade.europeia.pt
+            </a>
+            <a
+              href="https://github.com/nuno-joao-andrade-dev/ai-exam-prep"
+              target="_blank"
+              rel="noreferrer"
+            >
+              GitHub Repo
+            </a>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

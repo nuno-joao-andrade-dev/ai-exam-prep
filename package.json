@@ -10,6 +10,7 @@
     "step-03-exam-gen",
     "step-04-socratic-agent",
     "step-05-grading-complete",
+    "step-06-web-ui",
     "question-interface"
   ],
   "scripts": {
@@ -20,9 +21,10 @@
     "step04": "node step-04-socratic-agent/index.js",
     "step04:web": "adk web step-04-socratic-agent/index.js --compile false --bundle false",
     "step05": "node step-05-grading-complete/index.js",
+    "step06": "node step-06-web-ui/index.js",
     "server": "node step-05-grading-complete/server.js",
-    "ui": "npm --prefix question-interface run dev",
-    "ui:build": "npm --prefix question-interface run build",
+    "ui": "npm --prefix step-06-web-ui run dev",
+    "ui:build": "npm --prefix step-06-web-ui run build",
     "slides": "node src/shared/serve-slides.js",
     "test:all": "node src/shared/test-all.js"
   },

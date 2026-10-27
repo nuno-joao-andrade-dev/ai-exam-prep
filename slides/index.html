@@ -211,7 +211,7 @@
         display: flex;
         align-items: flex-start;
         justify-content: center;
-        padding: 32px 24px 60px;
+        padding: 18px 24px 42px;
       }
 
       .slide {
@@ -221,7 +221,7 @@
         background: var(--bg-slide);
         border: 1px solid var(--border);
         border-radius: 24px;
-        padding: 36px 42px 28px;
+        padding: 24px 36px 18px;
         box-shadow:
           0 1px 3px rgba(60, 64, 67, 0.08),
           0 12px 32px rgba(60, 64, 67, 0.07);
@@ -294,10 +294,10 @@
       }
 
       h1 {
-        font-size: 27px;
+        font-size: 24px;
         font-weight: 800;
         letter-spacing: -0.02em;
-        margin: 0 0 10px 0;
+        margin: 0 0 8px 0;
         color: var(--text);
       }
 
@@ -307,20 +307,20 @@
         padding: 2px 10px;
         border-radius: 8px;
         font-family: 'JetBrains Mono', monospace;
-        font-size: 22px;
+        font-size: 20px;
       }
 
       p.lead {
-        margin: 0 0 20px 0;
+        margin: 0 0 14px 0;
         color: var(--muted);
-        font-size: 15px;
-        line-height: 1.6;
+        font-size: 14px;
+        line-height: 1.5;
       }
 
       .grid-2 {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 18px;
+        gap: 16px;
       }
 
       @media (max-width: 960px) {
@@ -334,7 +334,7 @@
         border: 1px solid var(--border);
         border-radius: 14px;
         overflow: hidden;
-        margin-bottom: 16px;
+        margin-bottom: 12px;
         box-shadow: 0 1px 2px rgba(60, 64, 67, 0.04);
       }
 
@@ -342,11 +342,11 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 8px 14px;
+        padding: 6px 14px;
         background: var(--bg-code-header);
         border-bottom: 1px solid var(--border);
         font-family: 'JetBrains Mono', monospace;
-        font-size: 11.5px;
+        font-size: 11px;
         font-weight: 600;
         color: var(--g-blue-dark);
       }
@@ -375,7 +375,7 @@
         border: 1px solid var(--border);
         color: var(--text);
         border-radius: 999px;
-        padding: 3px 10px;
+        padding: 2px 10px;
         font-size: 11px;
         font-weight: 600;
         cursor: pointer;
@@ -390,11 +390,11 @@
 
       pre {
         margin: 0;
-        padding: 15px 18px;
+        padding: 11px 16px;
         overflow-x: auto;
         font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
-        font-size: 12.5px;
-        line-height: 1.55;
+        font-size: 12px;
+        line-height: 1.42;
         color: #1f2937;
         background: #ffffff;
       }
@@ -487,7 +487,7 @@
         <span class="step-tag">Slide 01 / 16 • Project Architecture</span>
         <h1>Simple JavaScript Folder Layout &amp; <code>data/[area]/[content files]</code></h1>
         <p class="lead">
-          Every step is a self-contained JavaScript folder (<code>node index.js &lt;area&gt;</code>), study materials live in <code>data/[area]/[content files]</code>, and the React web app lives in <code>question-interface/</code>.
+          Every step is a self-contained JavaScript folder (<code>node index.js &lt;area&gt;</code>), study materials live in <code>data/[area]/[content files]</code>, and Optional Step 06 provides an IADE-inspired React student web app in <code>step-06-web-ui/</code>.
         </p>
         <div class="code-box">
           <div class="code-header"><span>Workspace Tree</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
@@ -509,8 +509,8 @@
 ├── step-02-rag/                  # cd step-02-rag &amp;&amp; node index.js &lt;area&gt;
 ├── step-03-exam-gen/             # cd step-03-exam-gen &amp;&amp; node index.js &lt;area&gt;
 ├── step-04-socratic-agent/       # cd step-04-socratic-agent &amp;&amp; node index.js &lt;area&gt;
-├── step-05-grading-complete/     # cd step-05-grading-complete &amp;&amp; node index.js &lt;area&gt;
-└── question-interface/           # React + Vite Web UI (?area=javascript)</code></pre>
+├── step-05-grading-complete/     # Grader CLI + Express API &amp; OpenAPI/Swagger (:3000)
+└── step-06-web-ui/               # Step 6 (Optional): IADE React Student Web UI (:5173)</code></pre>
         </div>
       </section>
 
@@ -543,7 +543,7 @@ curl http://127.0.0.1:11434/api/tags</code></pre>
         <span class="step-tag">Slide 03 / 16 • Step 0.2: Model &amp; npm Setup</span>
         <h1>Pull Local <code>gemma4:e2b</code> &amp; Install Workspace Dependencies</h1>
         <p class="lead">
-          Pull the Gemma 4 model once for offline inference, then run <code>npm install</code> in the root folder to link all 5 step folders and <code>question-interface</code>.
+          Pull the Gemma 4 model once for offline inference, then run <code>npm install</code> in the root folder to link all step folders and <code>step-06-web-ui</code>.
         </p>
         <div class="grid-2">
           <div class="code-box">
@@ -569,16 +569,12 @@ npm install</code></pre>
   "step04": "node step-04-socratic-agent/index.js",
   "step04:web": "adk web step-04-socratic-agent/index.js --compile false --bundle false",
   "step05": "node step-05-grading-complete/index.js",
+  "step06": "node step-06-web-ui/index.js",
   "server": "node step-05-grading-complete/server.js",
-  "ui": "npm --prefix question-interface run dev",
-  "ui:build": "npm --prefix question-interface run build",
+  "ui": "npm --prefix step-06-web-ui run dev",
+  "ui:build": "npm --prefix step-06-web-ui run build",
   "slides": "node src/shared/serve-slides.js",
   "test:all": "node src/shared/test-all.js"
-}
-
-// Each step-0X-.../package.json "scripts":
-{
-  "start": "node index.js"
 }</code></pre>
           </div>
         </div>
@@ -989,82 +985,74 @@ npm run step05 -- javascript</code></pre>
 
       <!-- SLIDE 13 -->
       <section class="slide">
-        <span class="step-tag">Slide 13 / 16 • Step 05 Express API Server</span>
-        <h1>Backend API Server: <code>step-05-grading-complete/server.js</code></h1>
+        <span class="step-tag">Slide 13 / 16 • Step 05 Express API &amp; OpenAPI (Swagger)</span>
+        <h1>Backend API &amp; Root OpenAPI Spec: <code>step-05-grading-complete/server.js</code></h1>
         <p class="lead">
-          Connects Steps 02, 03, 04, and 05 to the React Web Interface. Every route accepts <code>area</code> (folder inside <code>data/</code>) and optional <code>customContent</code> (raw Markdown string).
+          Serves an interactive <strong>OpenAPI 3.0.3 (Swagger)</strong> explorer on the root route (<code>GET /</code> &amp; <code>GET /openapi.json</code>) and exposes all 5 AI Exam Prep endpoints on <code>http://localhost:3000</code>.
         </p>
         <div class="code-box">
           <div class="code-header"><span>step-05-grading-complete/server.js</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-          <pre><code>// 1. Status &amp; available data/[area] folders
-app.get('/api/status', async (req, res) =&gt; {
-  const area = req.query.area || 'javascript';
-  const areaData = loadAreaContent(area);
-  res.json({ ollamaReachable: true, areas: listAreas(), currentArea: areaData.area, files: areaData.files });
+          <pre><code>// Root ("/") &amp; "/openapi.json": Serve OpenAPI 3.0.3 (Swagger) Specification
+app.get(['/openapi.json', '/swagger.json'], (req, res) =&gt; {
+  res.json(buildOpenApiSpec(`${req.protocol}://${req.get('host')}`));
+});
+app.get('/', (req, res) =&gt; {
+  const spec = buildOpenApiSpec(`${req.protocol}://${req.get('host')}`);
+  if (req.query.format === 'json' || req.accepts(['html', 'json']) === 'json') return res.json(spec);
+  res.type('html').send(renderSwaggerHtml(spec));
 });
 
-// 2. RAG Search over data/[area]/ or customContent parameter
-app.post('/api/rag/search', (req, res) =&gt; {
-  const { area = 'javascript', query = '', topK = 4, customContent = '' } = req.body || {};
-  res.json(searchAreaContent({ area, query, topK, customContent }));
-});
+// 1. Status &amp; available data/[area] folders  |  2. RAG Search over data/[area]/
+app.get('/api/status', async (req, res) =&gt; { /* returns ollamaReachable, areas, files */ });
+app.post('/api/rag/search', (req, res) =&gt; res.json(searchAreaContent(req.body)));
 
-// 3. Exam Question Generator
-app.post('/api/exam/generate', async (req, res) =&gt; {
-  const { area = 'javascript', topic = '', customContent = '' } = req.body || {};
-  res.json({ exam: await generateExamQuestion({ area, topic, customContent }) });
-});
-
-// 4. Socratic Study Mentor Chat &amp; 5. Rubric Grader
+// 3. Exam Question Generator  |  4. Socratic Mentor Chat  |  5. Rubric Grader
+app.post('/api/exam/generate', async (req, res) =&gt; res.json({ exam: await generateExamQuestion(req.body) }));
 app.post('/api/socratic/chat', async (req, res) =&gt; { /* runs createSocraticMentorAgent({ area, customContent }) */ });
-app.post('/api/grade/evaluate', async (req, res) =&gt; { /* runs evaluateStudentAnswer({ area, exam, studentAnswer, customContent }) */ });</code></pre>
+app.post('/api/grade/evaluate', async (req, res) =&gt; res.json({ evaluation: await evaluateStudentAnswer(req.body) }));</code></pre>
         </div>
       </section>
 
       <!-- SLIDE 14 -->
       <section class="slide">
-        <span class="step-tag">Slide 14 / 16 • React Question Interface: Area &amp; Content Parameters</span>
-        <h1>Passing Content as a Parameter in <code>question-interface/src/App.jsx</code></h1>
+        <span class="step-tag">Slide 14 / 16 • Step 06 (Optional): IADE-Inspired React Student UI</span>
+        <h1>Selecting Areas &amp; Solving Questions in <code>step-06-web-ui/src/App.jsx</code></h1>
         <p class="lead">
-          You can pass the area folder via URL (<code>?area=javascript</code>, <code>?area=ai-agents</code>, <code>?area=cloud</code>), switch it via the header dropdown, or pass raw Markdown via <code>?content=...</code> / the <strong>+ Pass Custom Content Parameter</strong> drawer.
+          Inspired by the <strong>IADE</strong> website (<code>iade.europeia.pt</code>), students select an area card (<code>javascript</code>, <code>ai-agents</code>, <code>cloud</code>), browse or generate questions via the Step 05 API, and submit answers for instant grading.
         </p>
         <div class="code-box">
-          <div class="code-header"><span>question-interface/src/App.jsx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-          <pre><code>function getInitialAreaFromUrl() {
-  const params = new URLSearchParams(window.location.search);
-  return params.get('area') || 'javascript';
-}
-
-function getInitialContentFromUrl() {
-  const params = new URLSearchParams(window.location.search);
-  return params.get('content') || '';
-}
-
-export function App() {
+          <div class="code-header"><span>step-06-web-ui/src/App.jsx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code>export function App() {
   const [area, setArea] = useState(getInitialAreaFromUrl);
-  const [customContent, setCustomContent] = useState(getInitialContentFromUrl);
+  const [questionDeck, setQuestionDeck] = useState(getAreaDefault(area).questionDeck);
 
   const handleSelectArea = (nextArea) =&gt; {
     setArea(nextArea);
-    const url = new URL(window.location.href);
-    url.searchParams.set('area', nextArea);
-    window.history.replaceState({}, '', url.toString());
+    setQuestionDeck(getAreaDefault(nextArea).questionDeck);
   };
 
-  // Every API request passes { area, customContent: customContent || undefined }
+  const handleGenerateExam = async (topic) =&gt; {
+    const res = await fetch('/api/exam/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ area, topic, customContent: customContent || undefined }),
+    });
+    const { exam } = await res.json();
+    setQuestionDeck((prev) =&gt; [...prev, exam]);
+  };
 }</code></pre>
         </div>
       </section>
 
       <!-- SLIDE 15 -->
       <section class="slide">
-        <span class="step-tag">Slide 15 / 16 • React Question Interface: Markdown Previews</span>
-        <h1>Markdown Preview Boxes: <code>question-interface/src/components/MarkdownPreview.jsx</code></h1>
+        <span class="step-tag">Slide 15 / 16 • Step 06 (Optional): Markdown Answer &amp; Rubric Grading</span>
+        <h1>Markdown Preview &amp; Split Editor: <code>step-06-web-ui/src/components/MarkdownPreview.jsx</code></h1>
         <p class="lead">
-          All scenarios, question prompts, rubric criteria, Socratic chat messages, and RAG excerpts use <code>&lt;MarkdownPreview /&gt;</code>, while student answers and chat inputs use <code>&lt;MarkdownBox defaultMode="preview" /&gt;</code> with <strong>Markdown Preview / Split / Edit MD</strong> tabs.
+          All scenarios, question prompts, rubric criteria, Socratic chat messages, and RAG excerpts use <code>&lt;MarkdownPreview /&gt;</code>, while student answers use <code>&lt;MarkdownBox defaultMode="split" /&gt;</code> with <strong>Write Answer (MD) / Split View / Preview</strong> tabs.
         </p>
         <div class="code-box">
-          <div class="code-header"><span>question-interface/src/components/MarkdownPreview.jsx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <div class="code-header"><span>step-06-web-ui/src/components/MarkdownPreview.jsx</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
           <pre><code>export function MarkdownBox({
   label,
   badge,
@@ -1072,7 +1060,7 @@ export function App() {
   onChange,
   placeholder = 'Write Markdown here...',
   rows = 6,
-  defaultMode = 'preview',
+  defaultMode = 'split',
   readOnly = false,
 }) {
   const [mode, setMode] = useState(defaultMode);
@@ -1081,12 +1069,12 @@ export function App() {
   return (
     &lt;div className="md-box-wrapper"&gt;
       &lt;div className="md-box-toolbar"&gt;
-        &lt;span&gt;{label}&lt;/span&gt;
+        &lt;span className="md-box-label"&gt;{label}&lt;/span&gt;
         {!readOnly &amp;&amp; (
           &lt;div className="md-mode-tabs"&gt;
-            {['preview', 'split', 'edit'].map((tab) =&gt; (
-              &lt;button key={tab} onClick={() =&gt; setMode(tab)} className={effectiveMode === tab ? 'active' : ''}&gt;
-                {tab === 'preview' ? 'Markdown Preview' : tab === 'split' ? 'Split' : 'Edit MD'}
+            {['edit', 'split', 'preview'].map((tab) =&gt; (
+              &lt;button key={tab} onClick={() =&gt; setMode(tab)} className={`md-mode-btn ${effectiveMode === tab ? 'active' : ''}`}&gt;
+                {tab === 'edit' ? 'Write Answer (MD)' : tab === 'split' ? 'Split View' : 'Preview'}
               &lt;/button&gt;
             ))}
           &lt;/div&gt;
@@ -1103,9 +1091,9 @@ export function App() {
       <!-- SLIDE 16 -->
       <section class="slide">
         <span class="step-tag">Slide 16 / 16 • Complete Execution Cheat Sheet</span>
-        <h1>Running Every Step &amp; Launching the React Web Interface</h1>
+        <h1>Running Every Step &amp; Launching Step 06 (IADE React UI)</h1>
         <p class="lead">
-          Enter any folder to run it standalone with <code>node index.js &lt;area&gt;</code>, or launch the full-stack React web interface.
+          Enter any folder to run it standalone with <code>node index.js &lt;area&gt;</code>, or run <code>npm run step06</code> to launch the Step 05 API + Step 06 IADE React Student Portal.
         </p>
         <div class="grid-2">
           <div class="code-box">
@@ -1117,6 +1105,7 @@ cd ../step-03-exam-gen &amp;&amp; npm start javascript
 cd ../step-04-socratic-agent &amp;&amp; npm start javascript
 cd ../step-04-socratic-agent &amp;&amp; npm run web    # Launch ADK Web UI (:8000)
 cd ../step-05-grading-complete &amp;&amp; npm start javascript
+cd ../step-06-web-ui &amp;&amp; npm start javascript   # Step 06: IADE React UI (:5173)
 
 # Or from root package.json:
 npm run step01 -- javascript
@@ -1125,7 +1114,7 @@ npm run step03 -- cloud
 npm run step04 -- javascript
 npm run step04:web                             # Launch ADK Web UI (:8000)
 npm run step05 -- javascript
-npm run test:all -- javascript</code></pre>
+npm run step06 -- javascript                   # Starts Step 05 API + Step 06 UI</code></pre>
           </div>
           <div class="code-box">
             <div class="code-header"><span>Run Web UI + API Server + Slides (concurrently)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
@@ -1133,11 +1122,11 @@ npm run test:all -- javascript</code></pre>
 npm run dev
 
 # Which executes via concurrently:
-# - npm run server  (Express API on http://localhost:3000)
-# - npm run ui      (React Vite UI on http://localhost:5173)
+# - npm run server  (Step 05 API + OpenAPI UI on http://localhost:3000)
+# - npm run ui      (Step 06 IADE React UI on http://localhost:5173)
 # - npm run slides  (Slide Deck on http://localhost:3030)
 
-# Open UI with any data/[area] parameter:
+# Open Step 06 UI with any data/[area] parameter:
 # http://localhost:5173/?area=javascript
 # http://localhost:5173/?area=ai-agents
 # http://localhost:5173/?area=cloud</code></pre>
@@ -1159,9 +1148,11 @@ npm run dev
     </footer>
 
     <script>
-      let currentSlide = 0;
-      let showAll = false;
       const slides = Array.from(document.querySelectorAll('.slide'));
+      const urlParams = new URLSearchParams(window.location.search);
+      const paramSlide = parseInt(urlParams.get('slide') || window.location.hash.replace('#', ''), 10);
+      let currentSlide = !isNaN(paramSlide) && paramSlide >= 1 && paramSlide <= slides.length ? paramSlide - 1 : 0;
+      let showAll = false;
       const counterEl = document.getElementById('slideCounter');
       const progressEl = document.getElementById('progressBar');
       const prevBtn = document.getElementById('prevBtn');

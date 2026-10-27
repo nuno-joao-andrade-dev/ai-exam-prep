@@ -10,7 +10,7 @@ function renderInlineMarkdown(text) {
     if (!part) return null;
     if (part.startsWith('**') && part.endsWith('**') && part.length > 4) {
       return (
-        <strong key={idx} className="font-semibold text-white">
+        <strong key={idx} className="md-strong">
           {part.slice(2, -2)}
         </strong>
       );
@@ -38,7 +38,7 @@ function renderInlineMarkdown(text) {
     }
     if (part.startsWith('*') && part.endsWith('*') && part.length > 2) {
       return (
-        <em key={idx} className="italic text-slate-200">
+        <em key={idx} className="md-em">
           {part.slice(1, -1)}
         </em>
       );
@@ -47,11 +47,18 @@ function renderInlineMarkdown(text) {
   });
 }
 
-export function MarkdownPreview({ content, className = '', emptyPlaceholder = 'No markdown content.' }) {
+export function MarkdownPreview({
+  content,
+  className = '',
+  emptyPlaceholder = 'No markdown content.',
+}) {
   const trimmed = (content || '').trim();
   if (!trimmed) {
     return (
-      <div className={`md-preview text-xs italic text-slate-500 ${className}`}>
+      <div
+        className={`md-preview ${className}`}
+        style={{ color: 'var(--text-muted)', fontStyle: 'italic' }}
+      >
         {emptyPlaceholder}
       </div>
     );
@@ -74,13 +81,9 @@ export function MarkdownPreview({ content, className = '', emptyPlaceholder = 'N
       }
       i++;
       blocks.push(
-        <div key={`code-${i}`} className="my-2 overflow-hidden rounded-lg border border-slate-800 bg-slate-950/90">
-          {lang && (
-            <div className="border-b border-slate-800/80 bg-slate-900/80 px-3 py-1 font-mono text-[10px] uppercase tracking-wider text-slate-400">
-              {lang}
-            </div>
-          )}
-          <pre className="overflow-x-auto p-3 font-mono text-xs leading-relaxed text-emerald-300">
+        <div key={`code-${i}`} className="md-code-block">
+          {lang && <div className="md-code-lang">{lang}</div>}
+          <pre>
             <code>{codeLines.join('\n')}</code>
           </pre>
         </div>
@@ -90,7 +93,7 @@ export function MarkdownPreview({ content, className = '', emptyPlaceholder = 'N
 
     if (line.startsWith('### ')) {
       blocks.push(
-        <h4 key={`h3-${i}`} className="mt-3 mb-1.5 text-xs font-bold uppercase tracking-wider text-sky-300">
+        <h4 key={`h3-${i}`} className="md-heading md-h3">
           {renderInlineMarkdown(line.slice(4))}
         </h4>
       );
@@ -99,7 +102,7 @@ export function MarkdownPreview({ content, className = '', emptyPlaceholder = 'N
     }
     if (line.startsWith('## ')) {
       blocks.push(
-        <h3 key={`h2-${i}`} className="mt-3 mb-1.5 text-sm font-bold text-white">
+        <h3 key={`h2-${i}`} className="md-heading md-h2">
           {renderInlineMarkdown(line.slice(3))}
         </h3>
       );
@@ -108,7 +111,7 @@ export function MarkdownPreview({ content, className = '', emptyPlaceholder = 'N
     }
     if (line.startsWith('# ')) {
       blocks.push(
-        <h2 key={`h1-${i}`} className="mt-3 mb-2 text-base font-bold text-white">
+        <h2 key={`h1-${i}`} className="md-heading md-h1">
           {renderInlineMarkdown(line.slice(2))}
         </h2>
       );
@@ -118,10 +121,7 @@ export function MarkdownPreview({ content, className = '', emptyPlaceholder = 'N
 
     if (line.trim().startsWith('> ')) {
       blocks.push(
-        <blockquote
-          key={`quote-${i}`}
-          className="my-2 border-l-2 border-indigo-400/70 bg-indigo-950/25 py-1.5 pl-3 pr-2 text-xs italic text-indigo-100/90"
-        >
+        <blockquote key={`quote-${i}`} className="md-blockquote">
           {renderInlineMarkdown(line.trim().slice(2))}
         </blockquote>
       );
@@ -136,9 +136,11 @@ export function MarkdownPreview({ content, className = '', emptyPlaceholder = 'N
         i++;
       }
       blocks.push(
-        <ul key={`ul-${i}`} className="my-1.5 list-disc space-y-1 pl-5 text-xs leading-relaxed text-slate-200">
+        <ul key={`ul-${i}`} className="md-list">
           {items.map((item, idx) => (
-            <li key={idx}>{renderInlineMarkdown(item)}</li>
+            <li key={idx} className="md-li">
+              {renderInlineMarkdown(item)}
+            </li>
           ))}
         </ul>
       );
@@ -152,9 +154,11 @@ export function MarkdownPreview({ content, className = '', emptyPlaceholder = 'N
         i++;
       }
       blocks.push(
-        <ol key={`ol-${i}`} className="my-1.5 list-decimal space-y-1 pl-5 text-xs leading-relaxed text-slate-200">
+        <ol key={`ol-${i}`} className="md-list">
           {items.map((item, idx) => (
-            <li key={idx}>{renderInlineMarkdown(item)}</li>
+            <li key={idx} className="md-li">
+              {renderInlineMarkdown(item)}
+            </li>
           ))}
         </ol>
       );
@@ -167,7 +171,7 @@ export function MarkdownPreview({ content, className = '', emptyPlaceholder = 'N
     }
 
     blocks.push(
-      <p key={`p-${i}`} className="my-1.5 text-xs leading-relaxed text-slate-200">
+      <p key={`p-${i}`} className="md-p">
         {renderInlineMarkdown(line)}
       </p>
     );
@@ -184,9 +188,9 @@ export function MarkdownBox({
   onChange,
   placeholder = 'Write Markdown here...',
   rows = 6,
-  defaultMode = 'preview',
+  defaultMode = 'edit',
   readOnly = false,
-  minHeight = '120px',
+  minHeight = '130px',
 }) {
   const [mode, setMode] = useState(defaultMode);
   const effectiveMode = readOnly ? 'preview' : mode;
@@ -194,24 +198,24 @@ export function MarkdownBox({
   return (
     <div className="md-box-wrapper">
       <div className="md-box-toolbar">
-        <div className="flex items-center gap-2">
-          {label && <span className="text-[11px] font-semibold text-slate-300">{label}</span>}
-          {badge && (
-            <span className="rounded bg-slate-800 px-1.5 py-0.5 font-mono text-[10px] text-sky-300">
-              {badge}
-            </span>
-          )}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {label && <span className="md-box-label">{label}</span>}
+          {badge && <span className="md-citation-badge">{badge}</span>}
         </div>
         {!readOnly && (
           <div className="md-mode-tabs">
-            {['preview', 'split', 'edit'].map((tab) => (
+            {['edit', 'split', 'preview'].map((tab) => (
               <button
                 key={tab}
                 type="button"
                 onClick={() => setMode(tab)}
-                className={`md-mode-tab ${effectiveMode === tab ? 'active' : ''}`}
+                className={`md-mode-btn ${effectiveMode === tab ? 'active' : ''}`}
               >
-                {tab === 'preview' ? 'Markdown Preview' : tab === 'split' ? 'Split' : 'Edit MD'}
+                {tab === 'edit'
+                  ? 'Write Answer (MD)'
+                  : tab === 'split'
+                    ? 'Split View'
+                    : 'Preview'}
               </button>
             ))}
           </div>
@@ -219,7 +223,7 @@ export function MarkdownBox({
       </div>
 
       {effectiveMode === 'preview' && (
-        <div className="p-3.5" style={{ minHeight }}>
+        <div className="md-box-preview-surface" style={{ minHeight }}>
           <MarkdownPreview content={value} emptyPlaceholder={placeholder} />
         </div>
       )}
@@ -230,20 +234,20 @@ export function MarkdownBox({
           value={value}
           onChange={(e) => onChange && onChange(e.target.value)}
           placeholder={placeholder}
-          className="w-full bg-slate-950/80 p-3.5 font-mono text-xs leading-relaxed text-slate-100 focus:outline-none"
+          className="md-box-textarea"
         />
       )}
 
       {effectiveMode === 'split' && (
-        <div className="grid grid-cols-1 divide-y divide-slate-800 md:grid-cols-2 md:divide-x md:divide-y-0">
+        <div className="md-box-body md-box-split">
           <textarea
             rows={rows}
             value={value}
             onChange={(e) => onChange && onChange(e.target.value)}
             placeholder={placeholder}
-            className="w-full bg-slate-950/80 p-3.5 font-mono text-xs leading-relaxed text-slate-100 focus:outline-none"
+            className="md-box-textarea"
           />
-          <div className="p-3.5" style={{ minHeight }}>
+          <div className="md-box-preview-surface" style={{ minHeight }}>
             <MarkdownPreview content={value} emptyPlaceholder={placeholder} />
           </div>
         </div>

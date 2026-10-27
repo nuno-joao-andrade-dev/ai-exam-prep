@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
 import { MarkdownPreview, MarkdownBox } from './MarkdownPreview';
+import { getAreaDefault } from '../sampleData';
 
 export function ExamQuestionView({
   area,
   exam,
+  questionDeck = [],
+  activeQuestionIndex = 0,
+  onSelectQuestionIndex,
   topic,
   onChangeTopic,
   onGenerateExam,
@@ -15,85 +19,156 @@ export function ExamQuestionView({
   onLoadSampleAnswer,
 }) {
   const [showExpectedConcepts, setShowExpectedConcepts] = useState(false);
+  const areaMeta = getAreaDefault(area);
+  const presets = areaMeta.topicPresets || [];
 
   return (
-    <div className="flex flex-col gap-4">
-      {/* Exam Generator Controls */}
-      <div className="rounded-2xl border border-slate-800/90 bg-slate-900/60 p-4 shadow-xl">
-        <div className="mb-2.5 flex items-center justify-between">
-          <span className="text-xs font-semibold uppercase tracking-wider text-sky-400">
-            Step 03 • Exam Generator (`data/{area}/`)
-          </span>
-          <span className="font-mono text-[11px] text-slate-400">
-            POST /api/exam/generate
-          </span>
+    <div className="iade-col">
+      {/* 1. Area Question Deck & Live Step 05 Generator */}
+      <section className="iade-card iade-card-accent-blue">
+        <div className="iade-card-header">
+          <div>
+            <div className="iade-section-kicker">
+              <span>Step 03 &amp; Step 05 API</span>
+              <span>•</span>
+              <span>data/{area}/</span>
+            </div>
+            <h2 className="iade-section-title">
+              Area Questions &amp; AI Question Generator
+            </h2>
+          </div>
+          <span className="iade-api-badge">POST /api/exam/generate</span>
         </div>
 
-        <div className="flex flex-col gap-2 sm:flex-row">
+        {/* Question Deck Switcher */}
+        <div className="iade-question-deck-bar">
+          <div className="iade-question-tabs">
+            <span
+              style={{
+                fontSize: '11.5px',
+                fontWeight: 900,
+                textTransform: 'uppercase',
+                letterSpacing: '0.06em',
+                color: 'var(--ui05)',
+                marginRight: '4px',
+              }}
+            >
+              Available Questions ({questionDeck.length}):
+            </span>
+            {questionDeck.map((q, idx) => (
+              <button
+                key={`${q.examTitle}-${idx}`}
+                type="button"
+                onClick={() => onSelectQuestionIndex(idx)}
+                className={`iade-q-tab ${
+                  idx === activeQuestionIndex ? 'active' : ''
+                }`}
+              >
+                Q{idx + 1}: {q.examTitle?.slice(0, 32)}
+                {q.examTitle?.length > 32 ? '…' : ''}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Preset Topic Chips */}
+        {presets.length > 0 && (
+          <div className="iade-topic-chips">
+            <span
+              style={{
+                fontSize: '11.5px',
+                fontWeight: 700,
+                color: 'var(--text-muted)',
+              }}
+            >
+              Topic Presets:
+            </span>
+            {presets.map((preset) => (
+              <button
+                key={preset}
+                type="button"
+                onClick={() => onChangeTopic(preset)}
+                className={`iade-topic-chip ${topic === preset ? 'active' : ''}`}
+              >
+                {preset}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Topic Input + Generate Button */}
+        <div className="iade-topic-generator-row" style={{ marginBottom: 0 }}>
           <input
             type="text"
             value={topic}
             onChange={(e) => onChangeTopic(e.target.value)}
-            placeholder={`Topic in data/${area}/...`}
-            className="flex-1 rounded-xl border border-slate-700/80 bg-slate-950/90 px-3.5 py-2 text-xs text-slate-100 placeholder-slate-500 focus:border-sky-500 focus:outline-none"
+            placeholder={`Enter a topic in data/${area}/ to generate a new AI exam question...`}
+            className="iade-input"
           />
           <button
             type="button"
-            onClick={onGenerateExam}
+            onClick={() => onGenerateExam(topic)}
             disabled={isGenerating}
-            className="rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 px-4 py-2 text-xs font-semibold text-white shadow-md shadow-sky-500/20 transition hover:brightness-110 disabled:opacity-50"
+            className="iade-btn iade-btn-blue"
           >
-            {isGenerating ? 'Generating with Gemma 4...' : 'Generate Question'}
+            {isGenerating
+              ? 'Generating with Gemma 4...'
+              : 'Generate Question via API'}
           </button>
         </div>
-      </div>
+      </section>
 
-      {/* Generated Question Card (Markdown Previews) */}
-      <div className="rounded-2xl border border-slate-800/90 bg-slate-900/60 p-5 shadow-xl">
-        <div className="mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
+      {/* 2. Active Question & Student Answer Card */}
+      <section className="iade-card iade-card-accent-top">
+        <div className="iade-card-header">
           <div>
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-indigo-400">
-              Area: data/{exam.area || area}/ • Question #{exam.questionNumber || 1}
-            </span>
-            <h2 className="text-base font-bold text-white">{exam.examTitle}</h2>
+            <div className="iade-section-kicker">
+              <span>Area: data/{exam.area || area}/</span>
+              <span>•</span>
+              <span>Question #{activeQuestionIndex + 1}</span>
+            </div>
+            <h2 className="iade-section-title">{exam.examTitle}</h2>
           </div>
-          <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 font-mono text-xs font-semibold text-emerald-300">
-            {exam.totalPoints} pts
-          </span>
+          <span className="iade-points-badge">{exam.totalPoints || 100} PTS</span>
         </div>
 
-        {/* Scenario Context Markdown Preview */}
-        <div className="mb-4">
-          <div className="mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
-            Scenario Context (Markdown Preview)
+        {/* Scenario Context */}
+        <div className="iade-scenario-box">
+          <div className="iade-box-label">
+            <span>Scenario Context</span>
+            <span>Grounded in data/{area}/</span>
           </div>
-          <div className="rounded-xl border border-slate-800/90 bg-slate-950/60 p-3.5">
-            <MarkdownPreview content={exam.scenarioContext} />
-          </div>
+          <MarkdownPreview content={exam.scenarioContext} />
         </div>
 
-        {/* Question Prompt Markdown Preview */}
-        <div className="mb-4">
-          <div className="mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-sky-400">
-            Question Prompt (Markdown Preview)
+        {/* Question Prompt */}
+        <div className="iade-prompt-box">
+          <div className="iade-box-label">
+            <span>Exam Question to Answer</span>
+            <span>Read carefully &amp; answer all parts below</span>
           </div>
-          <div className="rounded-xl border border-sky-500/20 bg-sky-950/15 p-3.5">
-            <MarkdownPreview content={exam.questionPrompt} />
-          </div>
+          <MarkdownPreview content={exam.questionPrompt} />
         </div>
 
-        {/* Toggleable Key Concepts Preview */}
-        <div className="mb-4">
+        {/* Toggleable Expected Key Concepts */}
+        <div style={{ marginBottom: '18px' }}>
           <button
             type="button"
             onClick={() => setShowExpectedConcepts((v) => !v)}
-            className="text-xs font-medium text-slate-400 hover:text-sky-300"
+            className="iade-btn iade-btn-outline iade-btn-sm"
           >
             {showExpectedConcepts ? '▼ Hide' : '▶ Show'} Expected Key Concepts (
             {exam.expectedKeyFormulasOrConcepts?.length || 0})
           </button>
           {showExpectedConcepts && (
-            <div className="mt-2 rounded-xl border border-slate-800 bg-slate-950/70 p-3">
+            <div
+              style={{
+                marginTop: '10px',
+                padding: '14px 16px',
+                background: 'var(--ui02)',
+                borderLeft: '4px solid var(--brand2)',
+              }}
+            >
               <MarkdownPreview
                 content={(exam.expectedKeyFormulasOrConcepts || [])
                   .map((item) => `- ${item}`)
@@ -103,44 +178,73 @@ export function ExamQuestionView({
           )}
         </div>
 
-        {/* Student Answer Box - defaults to Markdown Preview with Split/Edit toggle */}
-        <div className="mb-3">
-          <div className="mb-2 flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-200">
-              Your Answer (Markdown Preview / Editor)
-            </span>
-            <button
-              type="button"
-              onClick={onLoadSampleAnswer}
-              className="rounded-lg border border-slate-700 bg-slate-800/80 px-2.5 py-1 text-[11px] font-medium text-sky-300 hover:border-sky-500/50"
+        {/* Student Answer Workspace */}
+        <div style={{ marginBottom: '16px' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
+              gap: '8px',
+              marginBottom: '10px',
+            }}
+          >
+            <span
+              style={{
+                fontSize: '13px',
+                fontWeight: 900,
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+              }}
             >
-              Load Sample Markdown Answer
-            </button>
+              Student Answer Submission
+            </span>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button
+                type="button"
+                onClick={onLoadSampleAnswer}
+                className="iade-btn iade-btn-outline iade-btn-sm"
+              >
+                Load Sample Answer
+              </button>
+              {studentAnswer && (
+                <button
+                  type="button"
+                  onClick={() => onChangeStudentAnswer('')}
+                  className="iade-btn iade-btn-outline iade-btn-sm"
+                >
+                  Clear Answer
+                </button>
+              )}
+            </div>
           </div>
 
           <MarkdownBox
-            label="Student Submission"
+            label="Your Answer (Markdown Supported)"
             badge={`data/${area}/`}
             value={studentAnswer}
             onChange={onChangeStudentAnswer}
-            defaultMode="preview"
-            rows={7}
-            minHeight="150px"
-            placeholder="Click 'Edit MD' or 'Split' above to write your Markdown answer, or click 'Load Sample Markdown Answer'..."
+            defaultMode="split"
+            rows={8}
+            minHeight="160px"
+            placeholder="Type your answer here in Markdown (or click 'Load Sample Answer' to test the Step 05 Grader)..."
           />
         </div>
 
+        {/* Submit Answer for Step 05 API Grading */}
         <button
           type="button"
           onClick={onGradeAnswer}
           disabled={isGrading || !studentAnswer.trim()}
-          className="w-full rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-white shadow-lg shadow-emerald-500/20 transition hover:brightness-110 disabled:opacity-50"
+          className="iade-btn iade-btn-mint"
+          style={{ width: '100%', padding: '14px 24px', fontSize: '14.5px' }}
         >
           {isGrading
-            ? 'Evaluating against Rubric with Gemma 4...'
-            : 'Evaluate Answer against Rubric (Step 05)'}
+            ? 'Evaluating Answer via Step 05 API (POST /api/grade/evaluate)...'
+            : 'Submit Answer for AI Grading (Step 05 API)'}
         </button>
-      </div>
+      </section>
     </div>
   );
 }

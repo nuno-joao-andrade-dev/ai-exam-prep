@@ -1,0 +1,1145 @@
+/* ==========================================================================
+   IADE — Faculdade de Design, Tecnologia e Comunicação Inspired Design System
+   Step 06 (Optional): Student Exam & Socratic Web Interface
+   Source palette & tokens adapted from https://www.iade.europeia.pt/
+   ========================================================================== */
+
+:root {
+  --font-primary: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Official IADE Brand Tokens */
+  --brand1: #000000;          /* Stark Black */
+  --brand2: #3cdbc0;          /* Electric Mint / Turquoise */
+  --brand3: #0047bb;          /* Deep Electric Cobalt Blue */
+  --brand4: #f000ff;          /* Creative Magenta Accent */
+  --brand5: #ffffff;          /* Pure White */
+
+  /* Official IADE UI Surfaces */
+  --ui01: #ffffff;
+  --ui02: #eeeff2;
+  --ui03: #0047bb;
+  --ui04: #eeeff2;
+  --ui05: #243135;            /* Architectural Dark Slate-Teal */
+  --ui06: #f000ff;
+  --ui17: #ededed;
+  --ui18: #ecf3fd;            /* Soft Cobalt Blue Tint */
+
+  /* Official IADE Interactive Tokens */
+  --interactive01: #3cdbc0;
+  --interactive01Hover: #63e2cd;
+  --interactive01Active: #36c5ad;
+  --interactive02Focus: #ccfaf2;
+  --interactive05: #0047bb;
+  --interactive05Hover: #236be0;
+
+  /* Text & Borders */
+  --text-primary: #000000;
+  --text-secondary: #243135;
+  --text-muted: #5a686c;
+  --border-light: #d6d6d6;
+  --border-strong: #000000;
+  --danger: #de2b31;
+  --success: #0d9488;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  font-family: var(--font-primary);
+  background-color: var(--ui02);
+  color: var(--text-primary);
+  min-height: 100%;
+  width: 100%;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+code,
+pre {
+  font-family: var(--font-mono);
+}
+
+/* ==========================================================================
+   IADE Top Utility Bar & Main Navbar
+   ========================================================================== */
+.iade-navbar-wrapper {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--brand5);
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
+}
+
+.iade-utility-bar {
+  background: var(--ui04);
+  border-bottom: 1px solid var(--border-light);
+  font-size: 12.5px;
+  color: var(--ui05);
+}
+
+.iade-utility-inner {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 7px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.iade-utility-links {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  list-style: none;
+}
+
+.iade-utility-links a,
+.iade-utility-links span {
+  font-weight: 400;
+  color: var(--ui05);
+  position: relative;
+  padding-bottom: 2px;
+  transition: color 0.2s ease;
+}
+
+.iade-utility-links a:hover {
+  color: var(--brand3);
+}
+
+.iade-utility-links a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 1px;
+  width: 0;
+  background: var(--brand3);
+  transition: width 0.25s ease;
+}
+
+.iade-utility-links a:hover::after {
+  width: 100%;
+}
+
+.iade-utility-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.iade-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--brand5);
+  border: 1px solid var(--border-light);
+  padding: 3px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--brand1);
+}
+
+.iade-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.iade-status-dot.online {
+  background: var(--brand2);
+  box-shadow: 0 0 0 3px rgba(60, 219, 192, 0.3);
+}
+
+.iade-status-dot.offline {
+  background: var(--danger);
+}
+
+.iade-main-nav {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+  background: var(--brand5);
+}
+
+.iade-brand-group {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.iade-logo-svg {
+  height: 44px;
+  width: auto;
+  display: block;
+}
+
+.iade-brand-divider {
+  width: 1px;
+  height: 34px;
+  background: var(--border-light);
+}
+
+.iade-portal-badge {
+  display: flex;
+  flex-direction: column;
+}
+
+.iade-portal-kicker {
+  font-size: 10.5px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--brand3);
+}
+
+.iade-portal-title {
+  font-size: 15px;
+  font-weight: 900;
+  color: var(--brand1);
+  letter-spacing: -0.01em;
+}
+
+.iade-nav-areas {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.iade-nav-area-btn {
+  position: relative;
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 8px 16px;
+  font-family: var(--font-primary);
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--brand1);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.iade-nav-area-btn::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 12px;
+  right: 12px;
+  height: 3px;
+  background: transparent;
+  transition: background 0.2s ease;
+}
+
+.iade-nav-area-btn:hover {
+  color: var(--brand3);
+  background: var(--ui18);
+}
+
+.iade-nav-area-btn.active {
+  color: var(--brand3);
+  background: var(--ui18);
+}
+
+.iade-nav-area-btn.active::after {
+  background: var(--brand2);
+}
+
+.iade-new-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ui18);
+  color: var(--brand3);
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  letter-spacing: 0.04em;
+}
+
+.iade-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ==========================================================================
+   IADE Buttons (Mint Primary, Cobalt Blue Secondary, Black Editorial)
+   ========================================================================== */
+.iade-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 22px;
+  font-family: var(--font-primary);
+  font-size: 13.5px;
+  font-weight: 900;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.iade-btn:disabled {
+  background: #9eacaa !important;
+  color: #ededed !important;
+  border-color: #9eacaa !important;
+  cursor: not-allowed;
+}
+
+.iade-btn-mint {
+  background: var(--interactive01);
+  color: var(--brand1);
+  border-color: var(--interactive01);
+}
+
+.iade-btn-mint:hover:not(:disabled) {
+  background: var(--interactive01Hover);
+  border-color: var(--interactive01Hover);
+  transform: translateY(-1px);
+}
+
+.iade-btn-blue {
+  background: var(--brand3);
+  color: var(--brand5);
+  border-color: var(--brand3);
+}
+
+.iade-btn-blue:hover:not(:disabled) {
+  background: var(--interactive05Hover);
+  border-color: var(--interactive05Hover);
+  transform: translateY(-1px);
+}
+
+.iade-btn-outline {
+  background: var(--brand5);
+  color: var(--brand1);
+  border: 1.5px solid var(--brand1);
+}
+
+.iade-btn-outline:hover:not(:disabled) {
+  background: var(--interactive02Focus);
+  border-color: var(--brand2);
+}
+
+.iade-btn-sm {
+  padding: 7px 14px;
+  font-size: 11.5px;
+}
+
+/* ==========================================================================
+   IADE Hero Banner & Area Selector Cards
+   ========================================================================== */
+.iade-hero {
+  background: var(--brand3);
+  color: var(--brand5);
+  position: relative;
+  overflow: hidden;
+  border-bottom: 4px solid var(--brand2);
+}
+
+.iade-hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 42%;
+  background: var(--brand1);
+  clip-path: polygon(0 0, 100% 0, 82% 100%, 0% 100%);
+  pointer-events: none;
+}
+
+.iade-hero-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 32px 28px;
+}
+
+.iade-hero-top {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.iade-hero-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--brand2);
+  color: var(--brand1);
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 4px 12px;
+  margin-bottom: 10px;
+}
+
+.iade-hero-title {
+  font-size: clamp(24px, 3vw, 36px);
+  font-weight: 300;
+  line-height: 1.18;
+  color: var(--brand5);
+}
+
+.iade-hero-title strong {
+  font-weight: 900;
+  color: var(--brand2);
+}
+
+.iade-hero-subtitle {
+  margin-top: 8px;
+  font-size: 14.5px;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.88);
+  max-width: 680px;
+}
+
+/* Area Cards Grid inside Hero */
+.iade-area-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.iade-area-card {
+  background: var(--brand5);
+  color: var(--brand1);
+  border: 2px solid transparent;
+  padding: 18px 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 132px;
+}
+
+.iade-area-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
+}
+
+.iade-area-card.selected {
+  border-color: var(--brand2);
+  box-shadow: 0 0 0 3px rgba(60, 219, 192, 0.35), 0 12px 28px rgba(0, 0, 0, 0.22);
+}
+
+.iade-area-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.iade-area-faculty-tag {
+  font-size: 10.5px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--brand3);
+  background: var(--ui18);
+  padding: 3px 8px;
+}
+
+.iade-area-card.selected .iade-area-faculty-tag {
+  background: var(--brand2);
+  color: var(--brand1);
+}
+
+.iade-area-folder-code {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+.iade-area-card-title {
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--brand1);
+  margin-bottom: 4px;
+}
+
+.iade-area-card-title::after {
+  content: '';
+  display: block;
+  width: 42px;
+  height: 2px;
+  background: var(--brand1);
+  margin-top: 6px;
+  transition: width 0.25s ease, background 0.25s ease;
+}
+
+.iade-area-card.selected .iade-area-card-title::after,
+.iade-area-card:hover .iade-area-card-title::after {
+  width: 72px;
+  background: var(--brand3);
+}
+
+.iade-area-card-desc {
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  margin-top: 6px;
+}
+
+/* ==========================================================================
+   Main Workspace Grid
+   ========================================================================== */
+.iade-main {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 28px 28px 64px;
+}
+
+.iade-workspace-grid {
+  display: grid;
+  grid-template-columns: 7fr 5fr;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 1080px) {
+  .iade-workspace-grid {
+    grid-template-columns: 1fr;
+  }
+  .iade-hero::before {
+    width: 100%;
+    clip-path: none;
+    opacity: 0.35;
+  }
+}
+
+.iade-col {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+/* ==========================================================================
+   IADE Editorial Section Cards
+   ========================================================================== */
+.iade-card {
+  background: var(--brand5);
+  border: 1px solid var(--border-light);
+  padding: 24px;
+  position: relative;
+}
+
+.iade-card-accent-top {
+  border-top: 4px solid var(--brand1);
+}
+
+.iade-card-accent-blue {
+  border-top: 4px solid var(--brand3);
+}
+
+.iade-card-accent-mint {
+  border-top: 4px solid var(--brand2);
+}
+
+.iade-card-accent-magenta {
+  border-top: 4px solid var(--brand4);
+}
+
+.iade-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding-bottom: 16px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.iade-section-kicker {
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--brand3);
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.iade-section-title {
+  font-size: 21px;
+  font-weight: 900;
+  color: var(--brand1);
+  line-height: 1.25;
+}
+
+.iade-section-title::after {
+  content: '';
+  display: block;
+  width: 56px;
+  height: 2px;
+  background: var(--brand1);
+  margin-top: 8px;
+}
+
+.iade-api-badge {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--ui02);
+  color: var(--ui05);
+  border: 1px solid var(--border-light);
+  padding: 4px 10px;
+}
+
+/* Question Deck Tabs & Topic Bar */
+.iade-question-deck-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  background: var(--ui02);
+  padding: 12px 16px;
+  margin-bottom: 18px;
+  border-left: 4px solid var(--brand3);
+}
+
+.iade-question-tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.iade-q-tab {
+  background: var(--brand5);
+  border: 1px solid var(--border-light);
+  padding: 6px 14px;
+  font-family: var(--font-primary);
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--brand1);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.iade-q-tab:hover {
+  border-color: var(--brand3);
+  color: var(--brand3);
+}
+
+.iade-q-tab.active {
+  background: var(--brand1);
+  color: var(--brand2);
+  border-color: var(--brand1);
+}
+
+.iade-topic-generator-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.iade-input {
+  flex: 1;
+  min-width: 220px;
+  font-family: var(--font-primary);
+  font-size: 14px;
+  padding: 10px 14px;
+  border: 1px solid var(--border-light);
+  background: var(--brand5);
+  color: var(--brand1);
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.iade-input:focus {
+  border-color: var(--brand3);
+  box-shadow: 0 0 0 2px rgba(0, 71, 187, 0.15);
+}
+
+.iade-topic-chips {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.iade-topic-chip {
+  background: var(--ui18);
+  border: 1px solid rgba(0, 71, 187, 0.2);
+  color: var(--brand3);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.iade-topic-chip:hover,
+.iade-topic-chip.active {
+  background: var(--brand3);
+  color: var(--brand5);
+}
+
+/* Scenario & Prompt Boxes */
+.iade-scenario-box {
+  background: var(--ui02);
+  border-left: 4px solid var(--ui05);
+  padding: 16px 18px;
+  margin-bottom: 16px;
+}
+
+.iade-prompt-box {
+  background: var(--ui18);
+  border: 1px solid rgba(0, 71, 187, 0.25);
+  border-left: 4px solid var(--brand3);
+  padding: 18px 20px;
+  margin-bottom: 18px;
+}
+
+.iade-box-label {
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ui05);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.iade-prompt-box .iade-box-label {
+  color: var(--brand3);
+}
+
+.iade-points-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--brand1);
+  color: var(--brand2);
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  font-weight: 700;
+  padding: 5px 12px;
+}
+
+/* ==========================================================================
+   Scorecard & Rubric Styles
+   ========================================================================== */
+.iade-score-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 18px 20px;
+  background: var(--brand1);
+  color: var(--brand5);
+  margin-bottom: 18px;
+  border-left: 6px solid var(--brand2);
+}
+
+.iade-score-big {
+  font-size: 32px;
+  font-weight: 900;
+  color: var(--brand2);
+  font-family: var(--font-mono);
+}
+
+.iade-grade-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  font-weight: 900;
+  font-size: 13px;
+  text-transform: uppercase;
+  background: var(--brand2);
+  color: var(--brand1);
+}
+
+.iade-criterion-card {
+  border: 1px solid var(--border-light);
+  background: var(--brand5);
+  padding: 14px 16px;
+  margin-bottom: 12px;
+}
+
+.iade-criterion-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.iade-progress-track {
+  width: 100%;
+  height: 6px;
+  background: var(--ui02);
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.iade-progress-fill {
+  height: 100%;
+  background: var(--brand3);
+  transition: width 0.4s ease;
+}
+
+.iade-progress-fill.high {
+  background: var(--brand2);
+}
+
+/* ==========================================================================
+   Socratic Mentor Chat Styles
+   ========================================================================== */
+.iade-chat-log {
+  background: var(--ui02);
+  border: 1px solid var(--border-light);
+  padding: 16px;
+  max-height: 360px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.iade-chat-bubble {
+  padding: 12px 16px;
+  max-width: 92%;
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+
+.iade-chat-bubble.model {
+  align-self: flex-start;
+  background: var(--brand5);
+  border: 1px solid var(--border-light);
+  border-left: 4px solid var(--brand4);
+  color: var(--brand1);
+}
+
+.iade-chat-bubble.user {
+  align-self: flex-end;
+  background: var(--brand3);
+  color: var(--brand5);
+}
+
+.iade-chat-role {
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+  opacity: 0.75;
+}
+
+/* ==========================================================================
+   Markdown Preview & MarkdownBox Styles (Light IADE Editorial Theme)
+   ========================================================================== */
+.md-preview {
+  font-family: var(--font-primary);
+  color: var(--text-primary);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.md-preview-compact {
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+
+.md-heading {
+  color: var(--brand1);
+  font-weight: 900;
+  margin-top: 10px;
+  margin-bottom: 6px;
+  line-height: 1.3;
+}
+.md-heading:first-child {
+  margin-top: 0;
+}
+.md-h1 {
+  font-size: 17px;
+  color: var(--brand3);
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 4px;
+}
+.md-h2 {
+  font-size: 15px;
+  color: var(--brand1);
+}
+.md-h3,
+.md-h4 {
+  font-size: 14px;
+  color: var(--ui05);
+}
+
+.md-p {
+  margin-bottom: 8px;
+}
+.md-p:last-child {
+  margin-bottom: 0;
+}
+
+.md-strong {
+  color: var(--brand1);
+  font-weight: 900;
+}
+
+.md-em {
+  color: var(--ui05);
+  font-style: italic;
+}
+
+.md-inline-code {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  background: var(--ui18);
+  border: 1px solid rgba(0, 71, 187, 0.25);
+  color: var(--brand3);
+  padding: 1px 6px;
+}
+
+.md-citation-badge {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  background: var(--interactive02Focus);
+  border: 1px solid var(--brand2);
+  color: var(--brand1);
+  padding: 1px 8px;
+  margin: 0 2px;
+}
+
+.md-math-inline {
+  font-family: 'Cambria Math', 'STIX Two Math', Georgia, serif;
+  font-style: italic;
+  background: var(--interactive02Focus);
+  border: 1px solid var(--brand2);
+  color: var(--brand1);
+  padding: 1px 6px;
+  font-size: 13.5px;
+}
+
+.md-math-block-inline,
+.md-math-display {
+  display: block;
+  font-family: 'Cambria Math', 'STIX Two Math', Georgia, serif;
+  font-size: 15px;
+  background: var(--brand5);
+  border-left: 4px solid var(--brand2);
+  border-top: 1px solid var(--border-light);
+  border-right: 1px solid var(--border-light);
+  border-bottom: 1px solid var(--border-light);
+  color: var(--brand1);
+  padding: 10px 14px;
+  margin: 8px 0;
+  text-align: center;
+}
+
+.md-list {
+  margin: 6px 0 10px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.md-li {
+  color: var(--text-primary);
+}
+.md-sublist {
+  margin: 4px 0 4px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  list-style-type: circle;
+}
+
+.md-blockquote {
+  border-left: 4px solid var(--brand3);
+  background: var(--ui18);
+  padding: 10px 14px;
+  color: var(--ui05);
+  margin: 8px 0;
+}
+
+.md-code-block {
+  background: #14191f;
+  border: 1px solid var(--brand1);
+  overflow: hidden;
+  margin: 8px 0;
+}
+.md-code-lang {
+  background: var(--brand1);
+  color: var(--brand2);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 4px 12px;
+}
+.md-code-block pre {
+  padding: 12px 14px;
+  font-size: 12.5px;
+  color: #f8fafc;
+  overflow-x: auto;
+  white-space: pre-wrap;
+}
+
+/* MarkdownBox (Preview + Edit + Split container) */
+.md-box-wrapper {
+  border: 1.5px solid var(--brand1);
+  background: var(--brand5);
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+
+.md-box-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px 14px;
+  background: var(--ui02);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.md-box-label {
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--brand1);
+}
+
+.md-mode-tabs {
+  display: inline-flex;
+  background: var(--brand5);
+  border: 1px solid var(--border-light);
+  padding: 2px;
+  gap: 2px;
+}
+
+.md-mode-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: transparent;
+  color: var(--ui05);
+  border: none;
+  padding: 4px 10px;
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.md-mode-btn:hover {
+  color: var(--brand3);
+}
+
+.md-mode-btn.active {
+  background: var(--brand1);
+  color: var(--brand2);
+}
+
+.md-box-body {
+  display: block;
+}
+
+.md-box-body.md-box-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+@media (max-width: 800px) {
+  .md-box-body.md-box-split {
+    grid-template-columns: 1fr;
+  }
+}
+
+.md-box-textarea {
+  width: 100%;
+  border: none !important;
+  background: #fafafa !important;
+  color: var(--brand1);
+  font-family: var(--font-mono) !important;
+  font-size: 13px !important;
+  line-height: 1.6;
+  padding: 14px;
+  resize: vertical;
+  outline: none;
+}
+
+.md-box-split .md-box-textarea {
+  border-right: 1px solid var(--border-light) !important;
+}
+
+.md-box-preview-surface {
+  padding: 14px 16px;
+  min-height: 130px;
+  background: var(--brand5);
+}
+
+/* Footer */
+.iade-footer {
+  background: var(--brand1);
+  color: var(--brand5);
+  border-top: 4px solid var(--brand2);
+  padding: 28px;
+  margin-top: 48px;
+}
+
+.iade-footer-inner {
+  max-width: 1440px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 13px;
+}
