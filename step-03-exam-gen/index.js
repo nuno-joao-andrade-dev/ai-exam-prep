@@ -129,9 +129,7 @@ async function main() {
   console.log('\n✅ Step 03 complete!');
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
-  main().catch((err) => {
-    console.error('\n❌ Step 03 failed:', err.message);
-    process.exit(1);
-  });
-}
+main().catch((err) => {
+  console.error('\n❌ Step 03 failed:', err.message);
+  process.exit(1);
+});

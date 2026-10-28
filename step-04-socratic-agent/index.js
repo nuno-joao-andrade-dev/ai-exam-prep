@@ -67,9 +67,7 @@ async function main() {
   console.log('✅ Step 04 complete!');
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
   main().catch((err) => {
     console.error('\n❌ Step 04 failed:', err.message);
     process.exit(1);
   });
-}

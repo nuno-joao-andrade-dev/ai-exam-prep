@@ -176,9 +176,9 @@ async function main() {
   console.log('\n✅ Step 05 CLI grading complete! Run `npm run server` to start the Web API.');
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
-  main().catch((err) => {
-    console.error('\n❌ Step 05 failed:', err.message);
-    process.exit(1);
-  });
-}
+
+main().catch((err) => {
+  console.error('\n❌ Step 05 failed:', err.message);
+  process.exit(1);
+});
+

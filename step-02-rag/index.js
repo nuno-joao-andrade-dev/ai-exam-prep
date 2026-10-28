@@ -74,9 +74,7 @@ Cite the source file name in your explanation and keep your answer concise.`,
   console.log('\n✅ Step 02 complete!');
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
-  main().catch((err) => {
-    console.error('\n❌ Step 02 failed:', err.message);
-    process.exit(1);
-  });
-}
+main().catch((err) => {
+  console.error('\n❌ Step 02 failed:', err.message);
+  process.exit(1);
+});
